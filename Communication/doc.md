@@ -1,6 +1,6 @@
 ## Communication setup and working
 
-### Ad-Hoc + OLSRD Setup
+### Ad-Hoc + OLSR Setup
 [OLSRD_Setup](Communication/OLSR_Setup)
 
 ***
@@ -21,7 +21,7 @@ To be Added: Concise documentation.
 
 ***
 
-### OLSRD Working
+### OLSR Working
 [OLSR_AdHoc Working](https://github.com/Aryan-jaiswal/UAV_Fleet_Challenge/wiki/OLSR_AdHoc-Working)
 
 ***
