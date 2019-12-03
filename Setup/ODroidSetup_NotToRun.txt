@@ -39,6 +39,11 @@ sudo systemctl enable ssh
 # Enable wireless connection without Local user Login to allow direct SSH
 GUI> Go To Edit Connections > Edit the Current Wi-Fi > Allow all users to connect to this network
 
+# Alternatively, enable auto-login for user 'odroid': Edit the lightdm.conf (UbuntuMate only) and make changes as shown:
+sudo nano /etc/lightdm/lightdm.conf
+Add/Change the line as follows:
+autologin-user=odroid
+
 # Change host name
 # Having different names is important to identify odroids when multiple of them are SSHed into.
 sudo nano /etc/hostname
