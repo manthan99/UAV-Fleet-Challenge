@@ -4,6 +4,8 @@ Ad-Hoc Mode in Wi-fi allows peer-to-peer communication between nodes in a networ
 without the need of any fixed infrastructure like routers and access-points.
 this is essential for a decentralised swarm where no individual node/computer can cause failure of the whole system.
 
+VIMP: Not all USB Wifi adapters support Wifi Adhoc. Check the manufacturer datasheet to verify AdHoc support.
+
 Ad-Hoc mode is setup through the following instructions:
 
 1. Configure wireless interface by adding/modifying the following lines to /etc/networks/interfaces. 
