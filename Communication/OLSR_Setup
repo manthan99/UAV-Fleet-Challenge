@@ -1,7 +1,7 @@
 # OLSR-Mesh setup on Ubuntu devices (Laptop/ODroid)
 
 Configuration of mesh networks comprises of two major steps:
-a. Configuring wireless interface into Ad-Hoc mode
+a. Configuring wireless interface into Ad-Hoc mode (Dealt with separately in AdHoc Setup File)
 b. Setup of a daemon to handle routing (olsrd)
 
 There are many mesh routing protocols like BATMAN, OLSR. Setting up OLSRD is the easiest and offers many parameters to tweak.
@@ -9,40 +9,10 @@ The RFC of OLSRD can be read to understand the underlying algorithms: https://to
 Properties of OLSRD can be tweaked by modifying 
 	/etc/olsrd/olsrd.conf
 
-1. Install olsrd
+1. Setup Ad-Hoc mode by referring to 'AdHoc Setup'
+2. Install olsrd
   sudo apt-get install olsrd 
-
-2. Configure wireless interface by adding the following lines to /etc/networks/interfaces. 
-It is a good practice to make a backup of the existing interfaces file.
-
-	sudo cp /etc/network/interfaces /etc/networks/interfaces.orig
-	sudo nano /etc/network/interfaces
-
-Add these lines. Keep the all the parameters same except the address parameter on all devices. 
-All the IP addresses must lie within the same subnet.
-
-# interfaces(5) file used by ifup(8) and ifdown(8)
-# Include files from /etc/network/interfaces.d:
-source-directory /etc/network/interfaces.d
-
-auto lo
-iface lo inet loopback
-iface enp3s0 inet dhcp
-auto wlan0
-# wlan0 is the name of the Wireless Interface. For laptops, it can be found from ifconfig listing.
-iface wlan0 inet static
-  # IP Address of choice in the same subnet 
-  address 192.168.19.101
-  netmask 255.255.255.0
-  wireless-channel 1
-  wireless-essid MeshX
-  wireless-mode ad-hoc
-
-3. Reset system Networking
-  sudo ip a flush wlp2s0
-	sudo systemctl restart networking.service
-
-4. Start OLSRD
+3. Start OLSRD
 	sudo olsrd -i wlan0 -d 1
   # wlp2s0 on laptop
   
