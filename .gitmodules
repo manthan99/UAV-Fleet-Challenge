@@ -1,0 +1,3 @@
+[submodule "swarm_search"]
+	path = swarm_search
+	url = https://github.com/reyanshsolis/swarm_search
