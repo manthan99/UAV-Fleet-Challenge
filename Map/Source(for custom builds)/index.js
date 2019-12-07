@@ -129,10 +129,19 @@ var ros = new ROSLIB.Ros();
   });
 
   // Then we add a callback to be called every time a message is published on this topic.
-
+var xy = [];
   listener.subscribe(function(message) {
     console.log('Received message on ' + listener.name + ': ' + message.data);
-    addRandomFeature(message.data[0],message.data[1]);
+
+if ((xy.find(function(value){ 
+        if(value[0]==message.data[0]&&value[1]==message.data[1])
+            return 1;
+
+}))==undefined)
+ {
+   addRandomFeature(message.data[0],message.data[1]);
+    xy.push([message.data[0],message.data[1]]);
+}
   });
 
 
