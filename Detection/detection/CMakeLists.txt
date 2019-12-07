@@ -105,10 +105,10 @@ generate_messages(
 
 catkin_package(
    CATKIN_DEPENDS message_runtime
-   INCLUDE_DIRS include
-   LIBRARIES detection
-   CATKIN_DEPENDS geometry_msgs roscpp rospy
-   DEPENDS system_lib
+  # INCLUDE_DIRS include
+  # LIBRARIES detection
+  # CATKIN_DEPENDS geometry_msgs roscpp rospy
+  # DEPENDS system_lib
 )
 
 ###########

@@ -6,6 +6,7 @@
 #include "geometry_msgs/Point.h"
 #include "waypoint_generator/point_list.h"
 #include "geometry_msgs/PoseStamped.h"
+#include <std_msgs/Float64.h>
 
 #define PI 3.14159
 
@@ -21,6 +22,8 @@ double resolution_y = 1280;
 double resolution_x = 720;
 
 geometry_msgs::PoseStamped current_pos;
+
+std_msgs::Float64 heading_angle;
 
 
 double lat, lon, alt;
@@ -53,8 +56,8 @@ void framePointsToGPS (const waypoint_generator::point_list::ConstPtr& frame_poi
 	geometry_msgs::Point temp_point;
 	for (int i=0; i<frame_points->points.size(); i++)
 	{
-		distance = *length_per_pixelsqrt(pow(frame_points->points[i].x-resolution_x/2, 2)+(frame_points->points[i].y-resolution_y/2, 2));
-		distance_E = ;
+		// distance = *length_per_pixelsqrt(pow(frame_points->points[i].x-resolution_x/2, 2)+(frame_points->points[i].y-resolution_y/2, 2));
+		distance_E = 5;    //////////////////////////////////////////////////////////
 		conv.enu2Geodetic(distance_E, distance_N, 0, &lat_temp, &lon_temp, &alt_temp);
 		temp_point.x = lat_temp;
 		temp_point.y = lon_temp;

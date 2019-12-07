@@ -95,6 +95,16 @@ void setDestination(const geographic_msgs::GeoPoseStamped::ConstPtr& msg2)
   ROS_INFO("Destination set to Latitude: %f longitudetude: %f Altitude %f", X, Y, Z);
 }
 
+void callback_sip(const swarm_search::sip_goal::ConstPtr& msg)
+{
+  master_goal = *msg;
+}
+
+void receive_cmd(const mavros_msgs::GlobalPositionTarget::ConstPtr& msg)
+{
+
+}
+
 double haversine(double lat1, double lon1, double lat2, double lon2) 
 { 
     // distance between latitudes 
@@ -136,9 +146,10 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       global_pos_pub.publish(pose1);
       delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
       cout << "Delta to Destination : "<< delta_to_destination << endl;
-      cout << "Height Difference Remaining " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
-      if( delta_to_destination < goal_tolerance && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) /////////////////////change this//////////
+      cout << "Height Difference Remaining : " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
+      if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<50) /////////////////////change this//////////
       {
+        cout << "***************************************************************" << endl;
         ROS_INFO("Reached at the target position");  
         return 1;
       }
@@ -343,18 +354,6 @@ void scan_main(ros::NodeHandle nh)
  	}
 }
 
-
-
-void callback_sip(const swarm_search::sip_goal::ConstPtr& msg)
-{
-	master_goal = *msg;
-}
-
-void receive_cmd(const mavros_msgs::GlobalPositionTarget::ConstPtr& msg)
-{
-
-}
-
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "drone1_master_node");
@@ -384,7 +383,7 @@ int main(int argc, char** argv)
   flags.angular.y = 0;
   flags.angular.z = 0;
 
-  ROS_INFO("INITIALISING...");
+  ROS_INFO("INITIALISING...111111111111111111111111111");
   for(int i=0; i<100; i++)
   {
     ros::spinOnce();
