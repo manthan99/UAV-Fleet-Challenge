@@ -31,3 +31,4 @@ to install these dependcies run -
   Note: edit Source files and rebuild to make changes. (NPM to be used)
   See OpenLayers docs:
     https://openlayers.org/en/latest/doc/tutorials/bundle.html
+.
