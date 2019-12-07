@@ -19,9 +19,12 @@ def talker():
     point3.x = -35.363377
     point3.y = 149.164678
     point4 = Point()
-    point4.x = 0
-    point4.y = 0
-    msg.points = [point1, point2, point3, point4]
+    point4.x = -35.363207
+    point4.y = 149.164706
+    point5 = Point()
+    point5.x = 0
+    point5.y = 0
+    msg.points = [point1, point2, point3, point4,point5]
 
     while not rospy.is_shutdown():
         # rospy.loginfo(msg)

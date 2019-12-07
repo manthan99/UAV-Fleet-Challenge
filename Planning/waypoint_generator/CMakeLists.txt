@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(waypoint_generator)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -11,7 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   rospy
   std_msgs
+  roscpp
   message_generation
+  
 )
 
 ## System dependencies are found with CMake's conventions
@@ -198,3 +200,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_executable(ROI_publisher src/ROI_publisher.cpp)
+target_link_libraries(ROI_publisher  ${catkin_LIBRARIES})
