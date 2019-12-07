@@ -43,7 +43,7 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
     prev_node = min_node
     next_node = node_array[prev_node].neighbour[0].name
     while(next_node != end_node):
-        print(prev_node)
+        # print(prev_node)
         order_waypt.append(pos_array[next_node])
         node_array[next_node].neighbour.remove(node_array[prev_node])
         prev_node = next_node

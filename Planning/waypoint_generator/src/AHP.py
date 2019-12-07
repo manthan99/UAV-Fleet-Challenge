@@ -50,7 +50,7 @@ def AHP(edge, n):
             vis[e.u] = vis[e.v] = True
             unionSet(parent, rnk, e.u, e.v)
             path.append((e.u, e.v))
-            print(path)
+            # print(path)
             w += e.w
             i += 1
         else:
@@ -68,7 +68,7 @@ def AHP(edge, n):
             vis[e.u] = vis[e.v] = True
             unionSet(parent, rnk, e.u, e.v)
             path.append((e.u, e.v))
-            print(path)
+            # print(path)
             w += e.w
             i += 1
 
