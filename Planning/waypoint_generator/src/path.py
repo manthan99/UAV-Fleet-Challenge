@@ -38,11 +38,11 @@ def flag_callback(data):
 
 def listener():
     global pub1
-    rospy.init_node('path_drone1', anonymous=True)
+    rospy.init_node('path_drone2', anonymous=True)
     pos_sub = rospy.Subscriber('/chatter', point_list, posCallback)
-    current_pos = rospy.Subscriber("/drone1/mavros/global_position/global",NavSatFix, current_callback)
-    flags = rospy.Subscriber("/drone1/flags",Twist,flag_callback)
-    pub1 = rospy.Publisher('/drone1/ROI_flow', point_list, queue_size=5)
+    current_pos = rospy.Subscriber("/drone2/mavros/global_position/global",NavSatFix, current_callback)
+    flags = rospy.Subscriber("/drone2/flags",Twist,flag_callback)
+    pub1 = rospy.Publisher('/drone2/ROI_flow', point_list, queue_size=5)
     rospy.spin()
 
 
