@@ -13,7 +13,7 @@ ros-melodic-rosbridge-server (rosbridge_server)
 
 to install these dependcies run -
 
-  sudo apt install <package-name>
+     sudo apt install <package-name>
   
   NOTE: replace "melodic" with your ros version.
   
