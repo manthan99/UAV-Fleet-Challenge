@@ -31,7 +31,7 @@ to install these dependcies run -
       
       rostopic pub /listener std_msgs/Float64MultiArray {} [87.30903, 22.315826] 
       
-      (this is the current centre of the map.)
+   (this is the current centre of the map.)
   
   NOTE: multi array msgs have two parameters: layout and data {} parses an empty layout to msg.
   We can edit it as required.
