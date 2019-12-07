@@ -67898,7 +67898,7 @@ var _XYZ = _interopRequireDefault(require("./source/XYZ.js"));
 var _Zoomify = _interopRequireDefault(require("./source/Zoomify.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./source/BingMaps.js":"node_modules/ol/source/BingMaps.js","./source/CartoDB.js":"node_modules/ol/source/CartoDB.js","./source/Cluster.js":"node_modules/ol/source/Cluster.js","./source/IIIF.js":"node_modules/ol/source/IIIF.js","./source/Image.js":"node_modules/ol/source/Image.js","./source/ImageArcGISRest.js":"node_modules/ol/source/ImageArcGISRest.js","./source/ImageCanvas.js":"node_modules/ol/source/ImageCanvas.js","./source/ImageMapGuide.js":"node_modules/ol/source/ImageMapGuide.js","./source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","./source/ImageWMS.js":"node_modules/ol/source/ImageWMS.js","./source/OSM.js":"node_modules/ol/source/OSM.js","./source/Raster.js":"node_modules/ol/source/Raster.js","./source/Source.js":"node_modules/ol/source/Source.js","./source/Stamen.js":"node_modules/ol/source/Stamen.js","./source/Tile.js":"node_modules/ol/source/Tile.js","./source/TileArcGISRest.js":"node_modules/ol/source/TileArcGISRest.js","./source/TileDebug.js":"node_modules/ol/source/TileDebug.js","./source/TileImage.js":"node_modules/ol/source/TileImage.js","./source/TileJSON.js":"node_modules/ol/source/TileJSON.js","./source/TileWMS.js":"node_modules/ol/source/TileWMS.js","./source/UrlTile.js":"node_modules/ol/source/UrlTile.js","./source/UTFGrid.js":"node_modules/ol/source/UTFGrid.js","./source/Vector.js":"node_modules/ol/source/Vector.js","./source/VectorTile.js":"node_modules/ol/source/VectorTile.js","./source/WMTS.js":"node_modules/ol/source/WMTS.js","./source/XYZ.js":"node_modules/ol/source/XYZ.js","./source/Zoomify.js":"node_modules/ol/source/Zoomify.js"}],"../node_modules/object-assign/index.js":[function(require,module,exports) {
+},{"./source/BingMaps.js":"node_modules/ol/source/BingMaps.js","./source/CartoDB.js":"node_modules/ol/source/CartoDB.js","./source/Cluster.js":"node_modules/ol/source/Cluster.js","./source/IIIF.js":"node_modules/ol/source/IIIF.js","./source/Image.js":"node_modules/ol/source/Image.js","./source/ImageArcGISRest.js":"node_modules/ol/source/ImageArcGISRest.js","./source/ImageCanvas.js":"node_modules/ol/source/ImageCanvas.js","./source/ImageMapGuide.js":"node_modules/ol/source/ImageMapGuide.js","./source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","./source/ImageWMS.js":"node_modules/ol/source/ImageWMS.js","./source/OSM.js":"node_modules/ol/source/OSM.js","./source/Raster.js":"node_modules/ol/source/Raster.js","./source/Source.js":"node_modules/ol/source/Source.js","./source/Stamen.js":"node_modules/ol/source/Stamen.js","./source/Tile.js":"node_modules/ol/source/Tile.js","./source/TileArcGISRest.js":"node_modules/ol/source/TileArcGISRest.js","./source/TileDebug.js":"node_modules/ol/source/TileDebug.js","./source/TileImage.js":"node_modules/ol/source/TileImage.js","./source/TileJSON.js":"node_modules/ol/source/TileJSON.js","./source/TileWMS.js":"node_modules/ol/source/TileWMS.js","./source/UrlTile.js":"node_modules/ol/source/UrlTile.js","./source/UTFGrid.js":"node_modules/ol/source/UTFGrid.js","./source/Vector.js":"node_modules/ol/source/Vector.js","./source/VectorTile.js":"node_modules/ol/source/VectorTile.js","./source/WMTS.js":"node_modules/ol/source/WMTS.js","./source/XYZ.js":"node_modules/ol/source/XYZ.js","./source/Zoomify.js":"node_modules/ol/source/Zoomify.js"}],"node_modules/object-assign/index.js":[function(require,module,exports) {
 /*
 object-assign
 (c) Sindre Sorhus
@@ -67994,7 +67994,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
   return to;
 };
-},{}],"../node_modules/roslib/src/mixin.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/mixin.js":[function(require,module,exports) {
 /**
  * Mixin a feature to the core/Ros prototype.
  * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
@@ -68013,14 +68013,14 @@ module.exports = function (Ros, classes, features) {
     };
   });
 };
-},{}],"../node_modules/roslib/src/util/shim/WebSocket.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/util/shim/WebSocket.js":[function(require,module,exports) {
 module.exports = window.WebSocket;
-},{}],"../node_modules/roslib/src/util/shim/canvas.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/util/shim/canvas.js":[function(require,module,exports) {
 /* global document */
 module.exports = function Canvas() {
   return document.createElement('canvas');
 };
-},{}],"../node_modules/roslib/src/util/shim/decompressPng.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/util/shim/decompressPng.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Graeme Yeates - github.com/megawac
@@ -68076,7 +68076,7 @@ function decompressPng(data, callback) {
 }
 
 module.exports = decompressPng;
-},{"canvas":"../node_modules/roslib/src/util/shim/canvas.js"}],"../node_modules/cbor-js/cbor.js":[function(require,module,exports) {
+},{"canvas":"node_modules/roslib/src/util/shim/canvas.js"}],"node_modules/cbor-js/cbor.js":[function(require,module,exports) {
 var define;
 var global = arguments[3];
 /*
@@ -68486,7 +68486,7 @@ else if (!global.CBOR)
 
 })(this);
 
-},{}],"../node_modules/roslib/src/util/cborTypedArrayTags.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/util/cborTypedArrayTags.js":[function(require,module,exports) {
 'use strict';
 
 var UPPER32 = Math.pow(2, 32);
@@ -68607,7 +68607,7 @@ function cborTypedArrayTagger(data, tag) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = cborTypedArrayTagger;
 }
-},{}],"../node_modules/roslib/src/core/SocketAdapter.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/core/SocketAdapter.js":[function(require,module,exports) {
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -68739,7 +68739,7 @@ function SocketAdapter(client) {
 }
 
 module.exports = SocketAdapter;
-},{"../util/decompressPng":"../node_modules/roslib/src/util/shim/decompressPng.js","cbor-js":"../node_modules/cbor-js/cbor.js","../util/cborTypedArrayTags":"../node_modules/roslib/src/util/cborTypedArrayTags.js","ws":"../node_modules/roslib/src/util/shim/WebSocket.js"}],"../node_modules/roslib/src/core/ServiceResponse.js":[function(require,module,exports) {
+},{"../util/decompressPng":"node_modules/roslib/src/util/shim/decompressPng.js","cbor-js":"node_modules/cbor-js/cbor.js","../util/cborTypedArrayTags":"node_modules/roslib/src/util/cborTypedArrayTags.js","ws":"node_modules/roslib/src/util/shim/WebSocket.js"}],"node_modules/roslib/src/core/ServiceResponse.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -68758,7 +68758,7 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":"../node_modules/object-assign/index.js"}],"../node_modules/roslib/src/core/ServiceRequest.js":[function(require,module,exports) {
+},{"object-assign":"node_modules/object-assign/index.js"}],"node_modules/roslib/src/core/ServiceRequest.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -68777,7 +68777,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":"../node_modules/object-assign/index.js"}],"node_modules/process/browser.js":[function(require,module,exports) {
+},{"object-assign":"node_modules/object-assign/index.js"}],"node_modules/process/browser.js":[function(require,module,exports) {
 
 // shim for using process in browser
 var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
@@ -68986,7 +68986,7 @@ process.chdir = function (dir) {
 process.umask = function () {
   return 0;
 };
-},{}],"../node_modules/eventemitter2/lib/eventemitter2.js":[function(require,module,exports) {
+},{}],"node_modules/eventemitter2/lib/eventemitter2.js":[function(require,module,exports) {
 var process = require("process");
 var define;
 /*!
@@ -69766,7 +69766,7 @@ var define;
   }
 }();
 
-},{"process":"node_modules/process/browser.js"}],"../node_modules/roslib/src/core/Service.js":[function(require,module,exports) {
+},{"process":"node_modules/process/browser.js"}],"node_modules/roslib/src/core/Service.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -69896,7 +69896,7 @@ Service.prototype._serviceResponse = function (rosbridgeRequest) {
 };
 
 module.exports = Service;
-},{"./ServiceResponse":"../node_modules/roslib/src/core/ServiceResponse.js","./ServiceRequest":"../node_modules/roslib/src/core/ServiceRequest.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/core/Ros.js":[function(require,module,exports) {
+},{"./ServiceResponse":"node_modules/roslib/src/core/ServiceResponse.js","./ServiceRequest":"node_modules/roslib/src/core/ServiceRequest.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/core/Ros.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -70506,7 +70506,7 @@ Ros.prototype.decodeTypeDefs = function (defs) {
 };
 
 module.exports = Ros;
-},{"ws":"../node_modules/roslib/src/util/shim/WebSocket.js","./SocketAdapter.js":"../node_modules/roslib/src/core/SocketAdapter.js","./Service":"../node_modules/roslib/src/core/Service.js","./ServiceRequest":"../node_modules/roslib/src/core/ServiceRequest.js","object-assign":"../node_modules/object-assign/index.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/core/Message.js":[function(require,module,exports) {
+},{"ws":"node_modules/roslib/src/util/shim/WebSocket.js","./SocketAdapter.js":"node_modules/roslib/src/core/SocketAdapter.js","./Service":"node_modules/roslib/src/core/Service.js","./ServiceRequest":"node_modules/roslib/src/core/ServiceRequest.js","object-assign":"node_modules/object-assign/index.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/core/Message.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -70525,7 +70525,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":"../node_modules/object-assign/index.js"}],"../node_modules/roslib/src/core/Topic.js":[function(require,module,exports) {
+},{"object-assign":"node_modules/object-assign/index.js"}],"node_modules/roslib/src/core/Topic.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -70749,7 +70749,7 @@ Topic.prototype.publish = function (message) {
 };
 
 module.exports = Topic;
-},{"eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js","./Message":"../node_modules/roslib/src/core/Message.js"}],"../node_modules/roslib/src/core/Param.js":[function(require,module,exports) {
+},{"eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js","./Message":"node_modules/roslib/src/core/Message.js"}],"node_modules/roslib/src/core/Param.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -70831,7 +70831,7 @@ Param.prototype.delete = function (callback) {
 };
 
 module.exports = Param;
-},{"./Service":"../node_modules/roslib/src/core/Service.js","./ServiceRequest":"../node_modules/roslib/src/core/ServiceRequest.js"}],"../node_modules/roslib/src/core/index.js":[function(require,module,exports) {
+},{"./Service":"node_modules/roslib/src/core/Service.js","./ServiceRequest":"node_modules/roslib/src/core/ServiceRequest.js"}],"node_modules/roslib/src/core/index.js":[function(require,module,exports) {
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -70844,7 +70844,7 @@ var core = module.exports = {
   ServiceResponse: require('./ServiceResponse')
 };
 mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
-},{"../mixin":"../node_modules/roslib/src/mixin.js","./Ros":"../node_modules/roslib/src/core/Ros.js","./Topic":"../node_modules/roslib/src/core/Topic.js","./Message":"../node_modules/roslib/src/core/Message.js","./Param":"../node_modules/roslib/src/core/Param.js","./Service":"../node_modules/roslib/src/core/Service.js","./ServiceRequest":"../node_modules/roslib/src/core/ServiceRequest.js","./ServiceResponse":"../node_modules/roslib/src/core/ServiceResponse.js"}],"../node_modules/roslib/src/actionlib/ActionClient.js":[function(require,module,exports) {
+},{"../mixin":"node_modules/roslib/src/mixin.js","./Ros":"node_modules/roslib/src/core/Ros.js","./Topic":"node_modules/roslib/src/core/Topic.js","./Message":"node_modules/roslib/src/core/Message.js","./Param":"node_modules/roslib/src/core/Param.js","./Service":"node_modules/roslib/src/core/Service.js","./ServiceRequest":"node_modules/roslib/src/core/ServiceRequest.js","./ServiceResponse":"node_modules/roslib/src/core/ServiceResponse.js"}],"node_modules/roslib/src/actionlib/ActionClient.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -70994,7 +70994,7 @@ ActionClient.prototype.dispose = function () {
 };
 
 module.exports = ActionClient;
-},{"../core/Topic":"../node_modules/roslib/src/core/Topic.js","../core/Message":"../node_modules/roslib/src/core/Message.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/actionlib/ActionListener.js":[function(require,module,exports) {
+},{"../core/Topic":"node_modules/roslib/src/core/Topic.js","../core/Message":"node_modules/roslib/src/core/Message.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/actionlib/ActionListener.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Justin Young - justin@oodar.com.au
@@ -71073,7 +71073,7 @@ function ActionListener(options) {
 
 ActionListener.prototype.__proto__ = EventEmitter2.prototype;
 module.exports = ActionListener;
-},{"../core/Topic":"../node_modules/roslib/src/core/Topic.js","../core/Message":"../node_modules/roslib/src/core/Message.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/actionlib/Goal.js":[function(require,module,exports) {
+},{"../core/Topic":"node_modules/roslib/src/core/Topic.js","../core/Message":"node_modules/roslib/src/core/Message.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/actionlib/Goal.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -71160,7 +71160,7 @@ Goal.prototype.cancel = function () {
 };
 
 module.exports = Goal;
-},{"../core/Message":"../node_modules/roslib/src/core/Message.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/actionlib/SimpleActionServer.js":[function(require,module,exports) {
+},{"../core/Message":"node_modules/roslib/src/core/Message.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/actionlib/SimpleActionServer.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
@@ -71369,7 +71369,7 @@ SimpleActionServer.prototype.setPreempted = function () {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Topic":"../node_modules/roslib/src/core/Topic.js","../core/Message":"../node_modules/roslib/src/core/Message.js","eventemitter2":"../node_modules/eventemitter2/lib/eventemitter2.js"}],"../node_modules/roslib/src/actionlib/index.js":[function(require,module,exports) {
+},{"../core/Topic":"node_modules/roslib/src/core/Topic.js","../core/Message":"node_modules/roslib/src/core/Message.js","eventemitter2":"node_modules/eventemitter2/lib/eventemitter2.js"}],"node_modules/roslib/src/actionlib/index.js":[function(require,module,exports) {
 var Ros = require('../core/Ros');
 
 var mixin = require('../mixin');
@@ -71381,7 +71381,7 @@ var action = module.exports = {
   SimpleActionServer: require('./SimpleActionServer')
 };
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
-},{"../core/Ros":"../node_modules/roslib/src/core/Ros.js","../mixin":"../node_modules/roslib/src/mixin.js","./ActionClient":"../node_modules/roslib/src/actionlib/ActionClient.js","./ActionListener":"../node_modules/roslib/src/actionlib/ActionListener.js","./Goal":"../node_modules/roslib/src/actionlib/Goal.js","./SimpleActionServer":"../node_modules/roslib/src/actionlib/SimpleActionServer.js"}],"../node_modules/roslib/src/math/Vector3.js":[function(require,module,exports) {
+},{"../core/Ros":"node_modules/roslib/src/core/Ros.js","../mixin":"node_modules/roslib/src/mixin.js","./ActionClient":"node_modules/roslib/src/actionlib/ActionClient.js","./ActionListener":"node_modules/roslib/src/actionlib/ActionListener.js","./Goal":"node_modules/roslib/src/actionlib/Goal.js","./SimpleActionServer":"node_modules/roslib/src/actionlib/SimpleActionServer.js"}],"node_modules/roslib/src/math/Vector3.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -71454,7 +71454,7 @@ Vector3.prototype.clone = function () {
 };
 
 module.exports = Vector3;
-},{}],"../node_modules/roslib/src/math/Quaternion.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/math/Quaternion.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -71554,7 +71554,7 @@ Quaternion.prototype.clone = function () {
 };
 
 module.exports = Quaternion;
-},{}],"../node_modules/roslib/src/math/Pose.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/math/Pose.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -71635,7 +71635,7 @@ Pose.prototype.getInverse = function () {
 };
 
 module.exports = Pose;
-},{"./Vector3":"../node_modules/roslib/src/math/Vector3.js","./Quaternion":"../node_modules/roslib/src/math/Quaternion.js"}],"../node_modules/roslib/src/math/Transform.js":[function(require,module,exports) {
+},{"./Vector3":"node_modules/roslib/src/math/Vector3.js","./Quaternion":"node_modules/roslib/src/math/Quaternion.js"}],"node_modules/roslib/src/math/Transform.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -71671,14 +71671,14 @@ Transform.prototype.clone = function () {
 };
 
 module.exports = Transform;
-},{"./Vector3":"../node_modules/roslib/src/math/Vector3.js","./Quaternion":"../node_modules/roslib/src/math/Quaternion.js"}],"../node_modules/roslib/src/math/index.js":[function(require,module,exports) {
+},{"./Vector3":"node_modules/roslib/src/math/Vector3.js","./Quaternion":"node_modules/roslib/src/math/Quaternion.js"}],"node_modules/roslib/src/math/index.js":[function(require,module,exports) {
 module.exports = {
   Pose: require('./Pose'),
   Quaternion: require('./Quaternion'),
   Transform: require('./Transform'),
   Vector3: require('./Vector3')
 };
-},{"./Pose":"../node_modules/roslib/src/math/Pose.js","./Quaternion":"../node_modules/roslib/src/math/Quaternion.js","./Transform":"../node_modules/roslib/src/math/Transform.js","./Vector3":"../node_modules/roslib/src/math/Vector3.js"}],"../node_modules/roslib/src/tf/TFClient.js":[function(require,module,exports) {
+},{"./Pose":"node_modules/roslib/src/math/Pose.js","./Quaternion":"node_modules/roslib/src/math/Quaternion.js","./Transform":"node_modules/roslib/src/math/Transform.js","./Vector3":"node_modules/roslib/src/math/Vector3.js"}],"node_modules/roslib/src/tf/TFClient.js":[function(require,module,exports) {
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -71906,7 +71906,7 @@ TFClient.prototype.dispose = function () {
 };
 
 module.exports = TFClient;
-},{"../actionlib/ActionClient":"../node_modules/roslib/src/actionlib/ActionClient.js","../actionlib/Goal":"../node_modules/roslib/src/actionlib/Goal.js","../core/Service.js":"../node_modules/roslib/src/core/Service.js","../core/ServiceRequest.js":"../node_modules/roslib/src/core/ServiceRequest.js","../math/Transform":"../node_modules/roslib/src/math/Transform.js"}],"../node_modules/roslib/src/tf/index.js":[function(require,module,exports) {
+},{"../actionlib/ActionClient":"node_modules/roslib/src/actionlib/ActionClient.js","../actionlib/Goal":"node_modules/roslib/src/actionlib/Goal.js","../core/Service.js":"node_modules/roslib/src/core/Service.js","../core/ServiceRequest.js":"node_modules/roslib/src/core/ServiceRequest.js","../math/Transform":"node_modules/roslib/src/math/Transform.js"}],"node_modules/roslib/src/tf/index.js":[function(require,module,exports) {
 var Ros = require('../core/Ros');
 
 var mixin = require('../mixin');
@@ -71915,14 +71915,14 @@ var tf = module.exports = {
   TFClient: require('./TFClient')
 };
 mixin(Ros, ['TFClient'], tf);
-},{"../core/Ros":"../node_modules/roslib/src/core/Ros.js","../mixin":"../node_modules/roslib/src/mixin.js","./TFClient":"../node_modules/roslib/src/tf/TFClient.js"}],"../node_modules/roslib/src/urdf/UrdfTypes.js":[function(require,module,exports) {
+},{"../core/Ros":"node_modules/roslib/src/core/Ros.js","../mixin":"node_modules/roslib/src/mixin.js","./TFClient":"node_modules/roslib/src/tf/TFClient.js"}],"node_modules/roslib/src/urdf/UrdfTypes.js":[function(require,module,exports) {
 module.exports = {
   URDF_SPHERE: 0,
   URDF_BOX: 1,
   URDF_CYLINDER: 2,
   URDF_MESH: 3
 };
-},{}],"../node_modules/roslib/src/urdf/UrdfBox.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/urdf/UrdfBox.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -71953,7 +71953,7 @@ function UrdfBox(options) {
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":"../node_modules/roslib/src/math/Vector3.js","./UrdfTypes":"../node_modules/roslib/src/urdf/UrdfTypes.js"}],"../node_modules/roslib/src/urdf/UrdfColor.js":[function(require,module,exports) {
+},{"../math/Vector3":"node_modules/roslib/src/math/Vector3.js","./UrdfTypes":"node_modules/roslib/src/urdf/UrdfTypes.js"}],"node_modules/roslib/src/urdf/UrdfColor.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -71977,7 +71977,7 @@ function UrdfColor(options) {
 }
 
 module.exports = UrdfColor;
-},{}],"../node_modules/roslib/src/urdf/UrdfCylinder.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/urdf/UrdfCylinder.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72000,7 +72000,7 @@ function UrdfCylinder(options) {
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":"../node_modules/roslib/src/urdf/UrdfTypes.js"}],"../node_modules/roslib/src/urdf/UrdfMaterial.js":[function(require,module,exports) {
+},{"./UrdfTypes":"node_modules/roslib/src/urdf/UrdfTypes.js"}],"node_modules/roslib/src/urdf/UrdfMaterial.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72049,7 +72049,7 @@ UrdfMaterial.prototype.assign = function (obj) {
 };
 
 module.exports = UrdfMaterial;
-},{"./UrdfColor":"../node_modules/roslib/src/urdf/UrdfColor.js","object-assign":"../node_modules/object-assign/index.js"}],"../node_modules/roslib/src/urdf/UrdfMesh.js":[function(require,module,exports) {
+},{"./UrdfColor":"node_modules/roslib/src/urdf/UrdfColor.js","object-assign":"node_modules/object-assign/index.js"}],"node_modules/roslib/src/urdf/UrdfMesh.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72086,7 +72086,7 @@ function UrdfMesh(options) {
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":"../node_modules/roslib/src/math/Vector3.js","./UrdfTypes":"../node_modules/roslib/src/urdf/UrdfTypes.js"}],"../node_modules/roslib/src/urdf/UrdfSphere.js":[function(require,module,exports) {
+},{"../math/Vector3":"node_modules/roslib/src/math/Vector3.js","./UrdfTypes":"node_modules/roslib/src/urdf/UrdfTypes.js"}],"node_modules/roslib/src/urdf/UrdfSphere.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72108,7 +72108,7 @@ function UrdfSphere(options) {
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":"../node_modules/roslib/src/urdf/UrdfTypes.js"}],"../node_modules/roslib/src/urdf/UrdfVisual.js":[function(require,module,exports) {
+},{"./UrdfTypes":"node_modules/roslib/src/urdf/UrdfTypes.js"}],"node_modules/roslib/src/urdf/UrdfVisual.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72246,7 +72246,7 @@ function UrdfVisual(options) {
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":"../node_modules/roslib/src/math/Pose.js","../math/Vector3":"../node_modules/roslib/src/math/Vector3.js","../math/Quaternion":"../node_modules/roslib/src/math/Quaternion.js","./UrdfCylinder":"../node_modules/roslib/src/urdf/UrdfCylinder.js","./UrdfBox":"../node_modules/roslib/src/urdf/UrdfBox.js","./UrdfMaterial":"../node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfMesh":"../node_modules/roslib/src/urdf/UrdfMesh.js","./UrdfSphere":"../node_modules/roslib/src/urdf/UrdfSphere.js"}],"../node_modules/roslib/src/urdf/UrdfLink.js":[function(require,module,exports) {
+},{"../math/Pose":"node_modules/roslib/src/math/Pose.js","../math/Vector3":"node_modules/roslib/src/math/Vector3.js","../math/Quaternion":"node_modules/roslib/src/math/Quaternion.js","./UrdfCylinder":"node_modules/roslib/src/urdf/UrdfCylinder.js","./UrdfBox":"node_modules/roslib/src/urdf/UrdfBox.js","./UrdfMaterial":"node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfMesh":"node_modules/roslib/src/urdf/UrdfMesh.js","./UrdfSphere":"node_modules/roslib/src/urdf/UrdfSphere.js"}],"node_modules/roslib/src/urdf/UrdfLink.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72275,7 +72275,7 @@ function UrdfLink(options) {
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":"../node_modules/roslib/src/urdf/UrdfVisual.js"}],"../node_modules/roslib/src/urdf/UrdfJoint.js":[function(require,module,exports) {
+},{"./UrdfVisual":"node_modules/roslib/src/urdf/UrdfVisual.js"}],"node_modules/roslib/src/urdf/UrdfJoint.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author David V. Lu!!  davidvlu@gmail.com
@@ -72370,11 +72370,11 @@ function UrdfJoint(options) {
 }
 
 module.exports = UrdfJoint;
-},{"../math/Pose":"../node_modules/roslib/src/math/Pose.js","../math/Vector3":"../node_modules/roslib/src/math/Vector3.js","../math/Quaternion":"../node_modules/roslib/src/math/Quaternion.js"}],"../node_modules/roslib/src/util/shim/xmldom.js":[function(require,module,exports) {
+},{"../math/Pose":"node_modules/roslib/src/math/Pose.js","../math/Vector3":"node_modules/roslib/src/math/Vector3.js","../math/Quaternion":"node_modules/roslib/src/math/Quaternion.js"}],"node_modules/roslib/src/util/shim/xmldom.js":[function(require,module,exports) {
 exports.DOMImplementation = window.DOMImplementation;
 exports.XMLSerializer = window.XMLSerializer;
 exports.DOMParser = window.DOMParser;
-},{}],"../node_modules/roslib/src/urdf/UrdfModel.js":[function(require,module,exports) {
+},{}],"node_modules/roslib/src/urdf/UrdfModel.js":[function(require,module,exports) {
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -72470,7 +72470,7 @@ function UrdfModel(options) {
 }
 
 module.exports = UrdfModel;
-},{"./UrdfMaterial":"../node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfLink":"../node_modules/roslib/src/urdf/UrdfLink.js","./UrdfJoint":"../node_modules/roslib/src/urdf/UrdfJoint.js","xmldom":"../node_modules/roslib/src/util/shim/xmldom.js"}],"../node_modules/roslib/src/urdf/index.js":[function(require,module,exports) {
+},{"./UrdfMaterial":"node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfLink":"node_modules/roslib/src/urdf/UrdfLink.js","./UrdfJoint":"node_modules/roslib/src/urdf/UrdfJoint.js","xmldom":"node_modules/roslib/src/util/shim/xmldom.js"}],"node_modules/roslib/src/urdf/index.js":[function(require,module,exports) {
 module.exports = require('object-assign')({
   UrdfBox: require('./UrdfBox'),
   UrdfColor: require('./UrdfColor'),
@@ -72482,7 +72482,7 @@ module.exports = require('object-assign')({
   UrdfSphere: require('./UrdfSphere'),
   UrdfVisual: require('./UrdfVisual')
 }, require('./UrdfTypes'));
-},{"object-assign":"../node_modules/object-assign/index.js","./UrdfBox":"../node_modules/roslib/src/urdf/UrdfBox.js","./UrdfColor":"../node_modules/roslib/src/urdf/UrdfColor.js","./UrdfCylinder":"../node_modules/roslib/src/urdf/UrdfCylinder.js","./UrdfLink":"../node_modules/roslib/src/urdf/UrdfLink.js","./UrdfMaterial":"../node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfMesh":"../node_modules/roslib/src/urdf/UrdfMesh.js","./UrdfModel":"../node_modules/roslib/src/urdf/UrdfModel.js","./UrdfSphere":"../node_modules/roslib/src/urdf/UrdfSphere.js","./UrdfVisual":"../node_modules/roslib/src/urdf/UrdfVisual.js","./UrdfTypes":"../node_modules/roslib/src/urdf/UrdfTypes.js"}],"../node_modules/roslib/src/RosLib.js":[function(require,module,exports) {
+},{"object-assign":"node_modules/object-assign/index.js","./UrdfBox":"node_modules/roslib/src/urdf/UrdfBox.js","./UrdfColor":"node_modules/roslib/src/urdf/UrdfColor.js","./UrdfCylinder":"node_modules/roslib/src/urdf/UrdfCylinder.js","./UrdfLink":"node_modules/roslib/src/urdf/UrdfLink.js","./UrdfMaterial":"node_modules/roslib/src/urdf/UrdfMaterial.js","./UrdfMesh":"node_modules/roslib/src/urdf/UrdfMesh.js","./UrdfModel":"node_modules/roslib/src/urdf/UrdfModel.js","./UrdfSphere":"node_modules/roslib/src/urdf/UrdfSphere.js","./UrdfVisual":"node_modules/roslib/src/urdf/UrdfVisual.js","./UrdfTypes":"node_modules/roslib/src/urdf/UrdfTypes.js"}],"node_modules/roslib/src/RosLib.js":[function(require,module,exports) {
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -72506,7 +72506,7 @@ assign(ROSLIB, require('./math'));
 assign(ROSLIB, require('./tf'));
 assign(ROSLIB, require('./urdf'));
 module.exports = ROSLIB;
-},{"object-assign":"../node_modules/object-assign/index.js","./core":"../node_modules/roslib/src/core/index.js","./actionlib":"../node_modules/roslib/src/actionlib/index.js","./math":"../node_modules/roslib/src/math/index.js","./tf":"../node_modules/roslib/src/tf/index.js","./urdf":"../node_modules/roslib/src/urdf/index.js"}],"index.js":[function(require,module,exports) {
+},{"object-assign":"node_modules/object-assign/index.js","./core":"node_modules/roslib/src/core/index.js","./actionlib":"node_modules/roslib/src/actionlib/index.js","./math":"node_modules/roslib/src/math/index.js","./tf":"node_modules/roslib/src/tf/index.js","./urdf":"node_modules/roslib/src/urdf/index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 require("ol/ol.css");
@@ -72644,11 +72644,18 @@ var listener = new ROSLIB.Topic({
   messageType: 'std_msgs/Float64MultiArray'
 }); // Then we add a callback to be called every time a message is published on this topic.
 
+var xy = [];
 listener.subscribe(function (message) {
   console.log('Received message on ' + listener.name + ': ' + message.data);
-  addRandomFeature(message.data[0], message.data[1]);
+
+  if (xy.find(function (value) {
+    if (value[0] == message.data[0] && value[1] == message.data[1]) return 1;
+  }) == undefined) {
+    addRandomFeature(message.data[0], message.data[1]);
+    xy.push([message.data[0], message.data[1]]);
+  }
 });
-},{"ol/ol.css":"node_modules/ol/ol.css","ol/proj":"node_modules/ol/proj.js","ol/Feature":"node_modules/ol/Feature.js","ol/Map":"node_modules/ol/Map.js","ol/Observable":"node_modules/ol/Observable.js","ol/View":"node_modules/ol/View.js","ol/easing":"node_modules/ol/easing.js","ol/geom/Point":"node_modules/ol/geom/Point.js","ol/layer":"node_modules/ol/layer.js","ol/source":"node_modules/ol/source.js","ol/style":"node_modules/ol/style.js","ol/render":"node_modules/ol/render.js","roslib":"../node_modules/roslib/src/RosLib.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"ol/ol.css":"node_modules/ol/ol.css","ol/proj":"node_modules/ol/proj.js","ol/Feature":"node_modules/ol/Feature.js","ol/Map":"node_modules/ol/Map.js","ol/Observable":"node_modules/ol/Observable.js","ol/View":"node_modules/ol/View.js","ol/easing":"node_modules/ol/easing.js","ol/geom/Point":"node_modules/ol/geom/Point.js","ol/layer":"node_modules/ol/layer.js","ol/source":"node_modules/ol/source.js","ol/style":"node_modules/ol/style.js","ol/render":"node_modules/ol/render.js","roslib":"node_modules/roslib/src/RosLib.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -72676,7 +72683,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34887" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36175" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -72853,4 +72860,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
-//# sourceMappingURL=/final.e31bb0bc.js.map
+//# sourceMappingURL=/Source(for%20custom%20builds).e31bb0bc.js.map
