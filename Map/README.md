@@ -29,7 +29,7 @@ to install these dependcies run -
      roslaunch rosbridge_server rosbridge_websocket.launch
  3.Now we can start publishing a message from the server to test our JavaScript subscriber:
       
-      rostopic pub /listener std_msgs/Float64MultiArray {} [87.3090322.315826] 
+      rostopic pub /listener std_msgs/Float64MultiArray {} [87.30903, 22.315826] 
       
       (this is the current centre of the map.)
   
