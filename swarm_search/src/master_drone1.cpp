@@ -66,6 +66,8 @@ flags.angular.y = recovery1_flag
 flags.angular.z = recovery2_flag
 */
 
+float initial_takeoff_height = 0;
+
 swarm_search::sip_goal master_goal;
 
 void state_cb(const mavros_msgs::State::ConstPtr& msg)
@@ -126,7 +128,7 @@ double haversine(double lat1, double lon1, double lat2, double lon2)
 int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
 {
   // the setpoint publishing rate MUST be faster than 2Hz
-  ros::Rate rate(20.0);
+  ros::Rate rate(10.0);
 
   ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global", 10);
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
@@ -139,15 +141,17 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
     ros::Duration(0.01).sleep();
   }
 
+  pose1.header.stamp = ros::Time::now();
+  global_pos_pub.publish(pose1);
+
   if(global_pos_pub)
   {    //to reach the destination, it returns 1 when it has reached the destination
     for (int i=time_tolerance_to_destination; ros::ok() && i>0;--i)
     {
-      global_pos_pub.publish(pose1);
       delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
       cout << "Delta to Destination : "<< delta_to_destination << endl;
       cout << "Height Difference Remaining : " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
-      if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) /////////////////////change this//////////
+      if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<50) /////////////////////change this//////////
       {
         ROS_INFO("Reached at the target position");  
         return 1;
@@ -155,10 +159,13 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       ros::spinOnce();
       ros::Duration(0.5).sleep();
     }
-  }
+ }
 
   while (ros::ok())
   {
+    // pose1.header.stamp = ros::Time::now();
+    // global_pos_pub.publish(pose1);
+
     ros::spinOnce();
     rate.sleep();
   }
@@ -242,9 +249,11 @@ int search_main(ros::NodeHandle nh)
   for(int i=0;arr.points[i].x!=0;i++)
   {
     pose.header.stamp = ros::Time::now();
+    pose.header.frame_id = "base_link";
     pose.pose.position.latitude = arr.points[i].x;
     pose.pose.position.longitude = arr.points[i].y;
     pose.pose.position.altitude = current_pose.altitude;
+    pose.pose.orientation.w = 1.0;
     k = navigate(nh,pose);
     sleep(5);
     int detected_points = 0;
@@ -271,9 +280,10 @@ void scan_main(ros::NodeHandle nh)
   ros::Publisher flags_pub = nh.advertise<geometry_msgs::Twist>("/drone1/flags", 10);
   
 	pose.header.stamp = ros::Time::now();
+  pose.header.frame_id = "base_link";
 	pose.pose.position.latitude = master_goal.sip_start.x;
 	pose.pose.position.longitude = master_goal.sip_start.y;
-	pose.pose.position.altitude = current_pose.altitude + 10;
+	pose.pose.position.altitude = initial_takeoff_height + 10;
 
   int x = navigate(nh, pose); // navigate function to be done, returns 1 when reached
 
@@ -294,6 +304,7 @@ void scan_main(ros::NodeHandle nh)
    	sleep(5);
 
 		pose.header.stamp = ros::Time::now();
+    pose.header.frame_id = "base_link";
 		pose.pose.position.latitude = master_goal.sip_end.x;
 		pose.pose.position.longitude = master_goal.sip_end.y;
 		pose.pose.position.altitude = current_pose.altitude;
@@ -315,9 +326,10 @@ void scan_main(ros::NodeHandle nh)
     	{	
         ROS_INFO(" Good ROI Confidence - Proceeding to Search and Verify Target ");
         pose.header.stamp = ros::Time::now();
+        pose.header.frame_id = "base_link";
         pose.pose.position.latitude = current_pose.latitude;
         pose.pose.position.longitude = current_pose.longitude;
-        pose.pose.position.altitude = current_pose.altitude - 8;
+        pose.pose.position.altitude = initial_takeoff_height + 2;
 
         // start Multi-Goal Path Planning and wait for result, also start the detection code
 
@@ -420,9 +432,10 @@ int main(int argc, char** argv)
       ros::Duration(0.01).sleep();
       //wait for permission to take off
     }
-
+    initial_takeoff_height = current_pose.altitude;
     takeoff_done = takeoff(nh, takeoff_alt);
   }
+
 
   scan_main(nh);
 }

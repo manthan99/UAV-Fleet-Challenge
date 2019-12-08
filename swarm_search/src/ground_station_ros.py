@@ -59,13 +59,13 @@ target_3 = sip_goal()
 
 ###############################
 connected0 = 1
-connected1 = 1
-connected2 = 0
+connected1 = 0
+connected2 = 1
 connected3 = 1
 
 armed0 = 1
-armed1 = 1
-armed2 = 0
+armed1 = 0
+armed2 = 1
 armed3 = 1
 ###############################
 
@@ -438,23 +438,26 @@ def state0(data):
 def state1(data):
 	global connected1
 	global armed1
+	global j
 
 	connected1 = data.connected
 	armed1 = data.armed
 
-def state2(data):
-	global connected2
-	global armed2
-	global j
-
-	connected2 = data.connected
-	armed2 = data.armed
 	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j<10)):
 		calculate_execute()
 		j+=1
 
 	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j>=10)):
 	    execute()
+
+def state2(data):
+	global connected2
+	global armed2
+	
+
+	connected2 = data.connected
+	armed2 = data.armed
+
 
 def state3(data):
 	global connected3
