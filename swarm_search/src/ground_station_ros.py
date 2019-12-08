@@ -38,10 +38,35 @@ global connected3
 global armed3
 global state3
 
+global start_time
+
+global i
+i = 0
+
+global j
+j = 0
+
+global target_0
+global target_1
+global target_2
+global target_3
+
+target_0 = sip_goal()
+target_1 = sip_goal()
+target_2 = sip_goal()
+target_3 = sip_goal()
+
+
 ###############################
-connected0 = 1
-connected1 = 1
-connected3 = 1
+# connected0 = 1
+# connected1 = 1
+# connected2 = 1
+# connected3 = 1
+
+# armed0 = 1
+# armed1 = 1
+# armed2 = 1
+# armed3 = 1
 ###############################
 
 
@@ -303,10 +328,77 @@ def callback3(data):
 
 def execute():
 
-	target_0 = sip_goal()
-	target_1 = sip_goal()
-	target_2 = sip_goal()
-	target_3 = sip_goal()
+	global start_time
+	global i
+
+	global target_0
+	global target_1
+	global target_2
+	global target_3
+
+	if (i==0):
+		start_time = rospy.get_time()
+		i = 1
+
+
+	# target_0 = sip_goal()
+	# target_1 = sip_goal()
+	# target_2 = sip_goal()
+	# target_3 = sip_goal()
+
+	# target_0.takeoff_flag.data = 0
+	# target_1.takeoff_flag.data = 0
+	# target_2.takeoff_flag.data = 0
+	# target_3.takeoff_flag.data = 0
+
+	# gps_sip = compute_gps_sip(input_square,drone_start)
+	# target_sip = assign_sip(gps_sip,drone_input)
+
+	# target_0.sip_start.x = target_sip[0][0][0]
+	# target_0.sip_start.y = target_sip[0][0][1]
+	# target_0.sip_end.x = target_sip[0][1][0]
+	# target_0.sip_end.y = target_sip[0][1][1]
+
+	# target_1.sip_start.x = target_sip[1][0][0]
+	# target_1.sip_start.y = target_sip[1][0][1]
+	# target_1.sip_end.x = target_sip[1][1][0]
+	# target_1.sip_end.y = target_sip[1][1][1]
+
+	# target_2.sip_start.x = target_sip[2][0][0]
+	# target_2.sip_start.y = target_sip[2][0][1]
+	# target_2.sip_end.x = target_sip[2][1][0]
+	# target_2.sip_end.y = target_sip[2][1][1]
+
+	# target_3.sip_start.x = target_sip[3][0][0]
+	# target_3.sip_start.y = target_sip[3][0][1]
+	# target_3.sip_end.x = target_sip[3][1][0]
+	# target_3.sip_end.y = target_sip[3][1][1]
+
+	# target_2.takeoff_flag.data = 1 ####### only for testing
+	if((rospy.get_time()-start_time)>5):
+		target_1.takeoff_flag.data = 1
+
+	if((rospy.get_time()-start_time)>10):
+		target_2.takeoff_flag.data = 1
+
+	if((rospy.get_time()-start_time)>15):
+		target_3.takeoff_flag.data = 1
+
+	if((rospy.get_time()-start_time)>20):
+		target_0.takeoff_flag.data = 1
+
+	pub0.publish(target_0)
+	pub1.publish(target_1)
+	pub2.publish(target_2)
+	pub3.publish(target_3)
+
+
+def calculate_execute():
+
+	global target_0
+	global target_1
+	global target_2
+	global target_3
 
 	target_0.takeoff_flag.data = 0
 	target_1.takeoff_flag.data = 0
@@ -336,12 +428,6 @@ def execute():
 	target_3.sip_end.x = target_sip[3][1][0]
 	target_3.sip_end.y = target_sip[3][1][1]
 
-	target_2.takeoff_flag.data = 1 ####### only for testing
-	pub0.publish(target_0)
-	pub1.publish(target_1)
-	pub2.publish(target_2)
-	pub3.publish(target_3)
-
 def state0(data):
 	global connected0
 	global armed0
@@ -359,10 +445,15 @@ def state1(data):
 def state2(data):
 	global connected2
 	global armed2
+	global j
 
 	connected2 = data.connected
 	armed2 = data.armed
-	if(connected0 and connected1 and connected2 and connected3):
+	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j<10)):
+		calculate_execute()
+		j+=1
+
+	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j>=10)):
 	    execute()
 
 def state3(data):
@@ -380,16 +471,19 @@ def main():
 	global pub2
 	global pub3
 
-	rospy.init_node('initial_ground_publish', anonymous = True)
+	global start_time
 
-	# rospy.Subscriber("/drone0/mavros/global_position/global", NavSatFix, callback0)
-	# rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, callback1)
-	# rospy.Subscriber("/drone2/mavros/global_position/global", NavSatFix, callback2)
-	# rospy.Subscriber("/drone3/mavros/global_position/global", NavSatFix, callback3)
+	rospy.init_node('initial_ground_publish', anonymous = True)
+	start_time = rospy.get_time()
+
+	rospy.Subscriber("/drone0/mavros/global_position/global", NavSatFix, callback0)
+	rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, callback1)
+	rospy.Subscriber("/drone2/mavros/global_position/global", NavSatFix, callback2)
+	rospy.Subscriber("/drone3/mavros/global_position/global", NavSatFix, callback3)
 
 	##########################################
-	rospy.Subscriber("/drone2/mavros/global_position/global", NavSatFix, callback2)
-	rospy.Subscriber("/drone2/mavros/state", State, state2)
+	# rospy.Subscriber("/drone2/mavros/global_position/global", NavSatFix, callback2)
+	# rospy.Subscriber("/drone2/mavros/state", State, state2)
 	##########################################
 
 	pub0 = rospy.Publisher('master/drone0/ground_msg', sip_goal, queue_size=5)
@@ -397,10 +491,10 @@ def main():
 	pub2 = rospy.Publisher('master/drone2/ground_msg', sip_goal, queue_size=5)
 	pub3 = rospy.Publisher('master/drone3/ground_msg', sip_goal, queue_size=5)
 
-	# rospy.Subscriber("/drone0/mavros/state", State, state0)
-	# rospy.Subscriber("/drone1/mavros/state", State, state1)
-	# rospy.Subscriber("/drone2/mavros/state", State, state2)
-	# rospy.Subscriber("/drone3/mavros/state", State, state3)
+	rospy.Subscriber("/drone0/mavros/state", State, state0)
+	rospy.Subscriber("/drone1/mavros/state", State, state1)
+	rospy.Subscriber("/drone2/mavros/state", State, state2)
+	rospy.Subscriber("/drone3/mavros/state", State, state3)
 
 	while not rospy.is_shutdown():
 		rospy.spin()

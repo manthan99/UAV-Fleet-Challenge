@@ -147,9 +147,8 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
       cout << "Delta to Destination : "<< delta_to_destination << endl;
       cout << "Height Difference Remaining : " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
-      if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<50) /////////////////////change this//////////
+      if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) /////////////////////change this//////////
       {
-        cout << "***************************************************************" << endl;
         ROS_INFO("Reached at the target position");  
         return 1;
       }
@@ -174,6 +173,7 @@ bool arm_drone(ros::NodeHandle nh)
   srv_arm_i.request.value = true;
   if (arming_client_i.call(srv_arm_i) && srv_arm_i.response.success){
     ROS_INFO("ARM sent %d", srv_arm_i.response.success);
+    cout << "*******************************************************************" << endl;
     return 1;
   }
   else
@@ -383,7 +383,7 @@ int main(int argc, char** argv)
   flags.angular.y = 0;
   flags.angular.z = 0;
 
-  ROS_INFO("INITIALISING...111111111111111111111111111");
+  ROS_INFO("INITIALISING...");
   for(int i=0; i<100; i++)
   {
     ros::spinOnce();
@@ -404,20 +404,24 @@ int main(int argc, char** argv)
     rate.sleep();
   }
 
-  while(!armed)
-  {
-    armed = arm_drone(nh);
-  }
-
-  while( master_goal.takeoff_flag.data != 1 )
-  {
-    ROS_INFO("Waiting for the permission to take off");
-    //wait for permission to take off
-  }
-
   while(!takeoff_done)
   {
-    takeoff_done = takeoff(nh, takeoff_alt); // take off
+    while(!armed)
+    {
+      armed = arm_drone(nh);
+    }
+
+    while( master_goal.takeoff_flag.data != 1 )
+    {
+      armed = arm_drone(nh);
+      cout << master_goal.takeoff_flag.data << endl;
+      ROS_INFO("Waiting for the permission to take off");
+      ros::spinOnce();
+      ros::Duration(0.01).sleep();
+      //wait for permission to take off
+    }
+
+    takeoff_done = takeoff(nh, takeoff_alt);
   }
 
   scan_main(nh);
