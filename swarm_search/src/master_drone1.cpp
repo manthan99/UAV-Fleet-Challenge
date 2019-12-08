@@ -356,7 +356,7 @@ void scan_main(ros::NodeHandle nh)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "drone1_master_node");
+  ros::init(argc, argv, "drone2_master_node");
   ros::NodeHandle nh;
 
   // the setpoint publishing rate MUST be faster than 2Hz

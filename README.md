@@ -22,3 +22,18 @@ rosrun swarm_search master_drone1
 
 Then simply turn into guided mode and tada.
 ```
+
+### To change for individual drone(0/1/2/3):
+
+```
+In File Planning/waypoint_generator/path.py : 
+Change in listener, all drone2 to drone*  change all will work
+In File Planning/waypoint_generator/talker.py : 
+change in talker drone2 to drone* change all will work
+
+In file swarm_search/src/ground_station_ros.py : 
+Change according to which all drones are being used, also the input square and drone inputs
+
+In file swarm_search/src/<master_drone1.cpp : 
+change all drone2 to drone*
+```

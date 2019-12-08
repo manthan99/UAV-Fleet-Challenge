@@ -5,7 +5,7 @@ from geometry_msgs.msg import Point
 
 
 def talker():
-    pub = rospy.Publisher('/chatter', point_list, queue_size=10)
+    pub = rospy.Publisher('/drone2/chatter', point_list, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     r = rospy.Rate(10)  # 10hz
     msg = point_list()
