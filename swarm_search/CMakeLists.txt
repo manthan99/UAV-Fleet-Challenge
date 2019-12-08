@@ -219,8 +219,17 @@ include_directories(
 ##### SELF EXECUTABLES ###################################################
 ##########################################################################
 
-add_executable(drone0 src/drone0.cpp)
-target_link_libraries(drone0 ${catkin_LIBRARIES})
+#add_executable(drone0 src/unused/drone0.cpp)
+#target_link_libraries(drone0 ${catkin_LIBRARIES})
+
+add_executable(master_drone0 src/master_drone0.cpp)
+target_link_libraries(master_drone0 ${catkin_LIBRARIES})
 
 add_executable(master_drone1 src/master_drone1.cpp)
 target_link_libraries(master_drone1 ${catkin_LIBRARIES})
+
+add_executable(master_drone2 src/master_drone2.cpp)
+target_link_libraries(master_drone2 ${catkin_LIBRARIES})
+
+add_executable(master_drone3 src/master_drone3.cpp)
+target_link_libraries(master_drone3 ${catkin_LIBRARIES})

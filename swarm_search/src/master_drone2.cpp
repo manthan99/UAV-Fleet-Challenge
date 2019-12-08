@@ -128,8 +128,8 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
   // the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(20.0);
 
-  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global", 10);
-  ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone2/mavros/setpoint_position/global", 10);
+  ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone2/mavros/global_position/global", 10, pose_cb);
 
   // allow the subscribers to initialize
   ROS_INFO("INITIALISING...");
@@ -168,7 +168,7 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
 bool arm_drone(ros::NodeHandle nh)
 {
   // arming
-  ros::ServiceClient arming_client_i = nh.serviceClient<mavros_msgs::CommandBool>("/drone1/mavros/cmd/arming");
+  ros::ServiceClient arming_client_i = nh.serviceClient<mavros_msgs::CommandBool>("/drone2/mavros/cmd/arming");
   mavros_msgs::CommandBool srv_arm_i;
   srv_arm_i.request.value = true;
   if (arming_client_i.call(srv_arm_i) && srv_arm_i.response.success){
@@ -186,7 +186,7 @@ bool arm_drone(ros::NodeHandle nh)
 bool takeoff(ros::NodeHandle nh, float takeoff_alt_local)
 {
     //request takeoff
-    ros::ServiceClient takeoff_cl = nh.serviceClient<mavros_msgs::CommandTOL>("/drone1/mavros/cmd/takeoff");
+    ros::ServiceClient takeoff_cl = nh.serviceClient<mavros_msgs::CommandTOL>("/drone2/mavros/cmd/takeoff");
     mavros_msgs::CommandTOL srv_takeoff;
     srv_takeoff.request.altitude = takeoff_alt_local;
     if(takeoff_cl.call(srv_takeoff)){
@@ -203,7 +203,7 @@ bool takeoff(ros::NodeHandle nh, float takeoff_alt_local)
 
 bool land(ros::NodeHandle nh)
 {
-  ros::ServiceClient land_client = nh.serviceClient<mavros_msgs::CommandTOL>("/drone1/mavros/cmd/land");
+  ros::ServiceClient land_client = nh.serviceClient<mavros_msgs::CommandTOL>("/drone2/mavros/cmd/land");
   mavros_msgs::CommandTOL srv_land;
   if (land_client.call(srv_land) && srv_land.response.success)
   {
@@ -268,7 +268,7 @@ int search_main(ros::NodeHandle nh)
 void scan_main(ros::NodeHandle nh)
 {
 
-  ros::Publisher flags_pub = nh.advertise<geometry_msgs::Twist>("/drone1/flags", 10);
+  ros::Publisher flags_pub = nh.advertise<geometry_msgs::Twist>("/drone2/flags", 10);
   
 	pose.header.stamp = ros::Time::now();
 	pose.pose.position.latitude = master_goal.sip_start.x;
@@ -356,23 +356,23 @@ void scan_main(ros::NodeHandle nh)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "drone1_master_node");
+  ros::init(argc, argv, "drone2_master_node");
   ros::NodeHandle nh;
 
   // the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(20.0);
-  ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/drone1/mavros/state", 10, state_cb);
-  //ros::Publisher global_pos_pub = nh.advertise<mavros_msgs::GlobalPositionTarget>("/drone1/mavros/setpoint_position/global", 10);
-  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global", 10);
-  ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+  ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/drone2/mavros/state", 10, state_cb);
+  //ros::Publisher global_pos_pub = nh.advertise<mavros_msgs::GlobalPositionTarget>("/drone2/mavros/setpoint_position/global", 10);
+  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone2/mavros/setpoint_position/global", 10);
+  ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone2/mavros/global_position/global", 10, pose_cb);
  
-  ros::Subscriber nextGoal = nh.subscribe<geographic_msgs::GeoPoseStamped>("/master/drone1/next_goal/pose", 10, setDestination);
-  ros::Subscriber receive_master_cmd = nh.subscribe<mavros_msgs::GlobalPositionTarget>("/master/drone1/received_cmd", 10, receive_cmd);
-  ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
+  ros::Subscriber nextGoal = nh.subscribe<geographic_msgs::GeoPoseStamped>("/master/drone2/next_goal/pose", 10, setDestination);
+  ros::Subscriber receive_master_cmd = nh.subscribe<mavros_msgs::GlobalPositionTarget>("/master/drone2/received_cmd", 10, receive_cmd);
+  ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone2/drone_status", 10);
   //ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone0/drone_diag", 10)
 
-  ros::Subscriber groundStation_value = nh.subscribe<swarm_search::sip_goal>("master/drone1/ground_msg",10,callback_sip);
-  ros::Subscriber ROI_points = nh.subscribe<swarm_search::point_list>("/drone1/ROI_flow",10,roi_list);
+  ros::Subscriber groundStation_value = nh.subscribe<swarm_search::sip_goal>("master/drone2/ground_msg",10,callback_sip);
+  ros::Subscriber ROI_points = nh.subscribe<swarm_search::point_list>("/drone2/ROI_flow",10,roi_list);
   // allow the subscribers to initialize
 
   flags.linear.x = 0;
