@@ -58,15 +58,15 @@ target_3 = sip_goal()
 
 
 ###############################
-# connected0 = 1
-# connected1 = 1
-# connected2 = 1
-# connected3 = 1
+connected0 = 1
+connected1 = 1
+connected2 = 0
+connected3 = 1
 
-# armed0 = 1
-# armed1 = 1
-# armed2 = 1
-# armed3 = 1
+armed0 = 1
+armed1 = 1
+armed2 = 0
+armed3 = 1
 ###############################
 
 
