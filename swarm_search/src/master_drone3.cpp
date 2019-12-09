@@ -23,6 +23,7 @@
 
 #include <swarm_search/sip_goal.h>
 #include <swarm_search/point_list.h>
+#include <swarm_search/local_flags.h>
 
 using namespace std;
 
@@ -53,9 +54,11 @@ geographic_msgs::GeoPoseStamped pose; //target pose - updated in function setDes
 
 geometry_msgs::Twist drone_status;
 
-geometry_msgs::Twist flags;
+//geometry_msgs::Twist flags;
 
 swarm_search::point_list arr;
+swarm_search::local_flags flags;
+
 
 /*
 flags.linear.x = scan_flag
@@ -268,7 +271,7 @@ int search_main(ros::NodeHandle nh)
 void scan_main(ros::NodeHandle nh)
 {
 
-  ros::Publisher flags_pub = nh.advertise<geometry_msgs::Twist>("/drone3/flags", 10);
+  ros::Publisher flags_pub = nh.subscribe<swarm_search::point_list>("/drone3/flags", 10);
   
 	pose.header.stamp = ros::Time::now();
 	pose.pose.position.latitude = master_goal.sip_start.x;
@@ -288,7 +291,7 @@ void scan_main(ros::NodeHandle nh)
     //drone_status.angular.x = ROI_scan_flag;
 		// when ROI_scan_flag ==1 : start ROI_detection code
 
-    flags.linear.x = 1; 
+    flags.scan_flag.data = 1; 
     flags_pub.publish(flags); //scanning should start here
 
    	sleep(5);
@@ -305,8 +308,8 @@ void scan_main(ros::NodeHandle nh)
   		ROS_INFO(" Itteration 1 Scanning Complete ");
   		//ROS_INFO(" Requesting ROI Scanning to stop and pass coordinated to Multi-Goal Path Planner ")
   		//ROI_scan_flag = 0;
-      flags.linear.x = 0;//ROI_scan_flag;
-      flags.linear.y = 1; // between scanning and search
+      flags.scan_flag.data = 0;//ROI_scan_flag;
+      flags.transition_s2s = 1; // between scanning and search
       flags_pub.publish(flags);
   		// when ROI_scan_flag == 0 : stop ROI_detection code
 
@@ -326,8 +329,8 @@ void scan_main(ros::NodeHandle nh)
         if (w==1)
         {
           ROS_INFO(" Reached the Search Height ");
-          flags.linear.y = 0; //between scanning and search over
-          flags.linear.z = 1; // search starts
+          flags.transition_s2s = 0; //between scanning and search over
+          flags.search_flag = 1; // search starts
           flags_pub.publish(flags);
           sleep(1);
           int k = search_main(nh);    // k = 1 means all detection is completed and all four are found
@@ -338,7 +341,7 @@ void scan_main(ros::NodeHandle nh)
     	else
     	{
     		ROS_INFO(" Poor ROI Confidence - Requesting Recovery Mode 1 ");
-    		flags.angular.y = 1;//recovery1_flag = 1;
+    		flags.recovery1_flag = 1;//recovery1_flag = 1;
     		flags_pub.publish(flags);
     	}
  		}
@@ -375,13 +378,12 @@ int main(int argc, char** argv)
   ros::Subscriber ROI_points = nh.subscribe<swarm_search::point_list>("/drone3/ROI_flow",10,roi_list);
   // allow the subscribers to initialize
 
-  flags.linear.x = 0;
-  flags.linear.y = 0;
-  flags.linear.z = 0;
+  flags.scan_flag= 0;
+  flags.transition_s2s= 0;
+  flags.search_flag= 0;
 
-  flags.angular.x = 0;
-  flags.angular.y = 0;
-  flags.angular.z = 0;
+  flags.recovery1 = 0;
+  flags.recovery2 = 0;
 
   ROS_INFO("INITIALISING...");
   for(int i=0; i<100; i++)
