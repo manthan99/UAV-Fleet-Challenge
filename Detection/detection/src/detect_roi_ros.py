@@ -15,29 +15,92 @@ import rospy
 from geometry_msgs.msg import Point
 from detection.msg import point_list
 
+def kalman_xy(x, P, measurement, R,
+              motion = np.matrix('0. 0. 0. 0.').T,
+              Q = np.matrix(np.eye(4))):
+    """
+    Parameters:    
+    x: initial state 4-tuple of location and velocity: (x0, x1, x0_dot, x1_dot)
+    P: initial uncertainty convariance matrix
+    measurement: observed position
+    R: measurement noise 
+    motion: external motion added to state vector x
+    Q: motion noise (same shape as P)
+    """
+    return kalman(x, P, measurement, R, motion, Q,
+                  F = np.matrix('''
+                      1. 0. 1. 0.;
+                      0. 1. 0. 1.;
+                      0. 0. 1. 0.;
+                      0. 0. 0. 1.
+                      '''),
+                  H = np.matrix('''
+                      1. 0. 0. 0.;
+                      0. 1. 0. 0.'''))
+
+def kalman(x, P, measurement, R, motion, Q, F, H):
+    '''
+    Parameters:
+    x: initial state
+    P: initial uncertainty convariance matrix
+    measurement: observed position (same shape as H*x)
+    R: measurement noise (same shape as H)
+    motion: external motion added to state vector x
+    Q: motion noise (same shape as P)
+    F: next state function: x_prime = F*x
+    H: measurement function: position = H*x
+
+    Return: the updated and predicted new values for (x, P)
+
+    See also http://en.wikipedia.org/wiki/Kalman_filter
+
+    This version of kalman can be applied to many different situations by
+    appropriately defining F and H 
+    '''
+    # UPDATE x, P based on measurement m    
+    # distance between measured and current position-belief
+    y = np.matrix(measurement).T - H * x
+    S = H * P * H.T + R  # residual convariance
+    K = P * H.T * S.I    # Kalman gain
+    x = x + K*y
+    I = np.matrix(np.eye(F.shape[0])) # identity matrix
+    P = (I - K*H)*P
+
+    # PREDICT x, P based on motion
+    x = F*x + motion
+    P = F*P*F.T + Q
+
+    return x, P
+
+
 def point_publisher():
 	
-	cap = cv2.VideoCapture("/home/debjoy/A_projects/interiit/vids_n_pics/vnc1.avi")
+	################## CHANGE VIDEO FOR CAMERA Stream
+	cap = cv2.VideoCapture("/home/debjoy/A_projects/interiit/vids_n_pics/cropped_new1.avi")
 
 	# Check if camera opened successfully
 	if (cap.isOpened() == False): 
 		print("Unable to read feed")
 
-	cv2.namedWindow('frame',cv2.WINDOW_NORMAL)
+	# cv2.namedWindow('frame',cv2.WINDOW_NORMAL)
 	pub = rospy.Publisher('roi_coordinates', point_list)
 	rospy.init_node('detect_roi_ros', anonymous=True)
 	rate = rospy.Rate(10) # 10hz
 
 	msg = point_list()
 
+	list_prevkalman = []
+	list_currentkalman = []
+
 	while not rospy.is_shutdown():
 		
+		list_currentkalman = []
 		ret,frame = cap.read()
 		if not ret:
 			print "Finished"
 			break
 
-		cntlist = main_func(frame)
+		cntlist, list_prevkalman, list_currentkalman = main_func(frame, list_prevkalman, list_currentkalman)
 		cv2.waitKey(1)
 		if not cntlist:
 			rate.sleep()
@@ -81,7 +144,7 @@ def inbtwn(color):
 		return True
 	return False
 
-def main_func(frame):
+def main_func(frame, list_prevkalman, list_currentkalman):
 	
 	#key = cv2.waitKey(1) & 0xFF
 
@@ -173,15 +236,43 @@ def main_func(frame):
 			# Feature density check
 			
 			#####################################
-			cntlist.append([x,y,w,h])
+			
+			# cntlist.append([x,y,w,h])
 			((cX, cY), radius) = cv2.minEnclosingCircle(c)
-			cv2.circle(image, (int(cX), int(cY)), int(radius),
-				(0, 0, 255), 3)
+			# cv2.circle(image, (int(cX), int(cY)), int(radius), (255, 255, 255), 3)
 			# cv2.putText(image, "#{}".format(i + 1), (x, y - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 
+			cl = np.array([cX, cY])
+			matched = False
+			R = 0
+
+			for (xx, P), dc in list_prevkalman:
+				# print("inside")
+				lcv = P[:2, :2]
+				t = np.array([cX-xx[0][0], cY - xx[1][0]]).reshape((1,2))
+				lpp = np.matmul(np.matmul(t, lcv), t.T)
+				# print("\n\n")
+				# print(lpp)
+				if lpp < 50000:
+					matched = True
+					list_currentkalman.append((kalman_xy(xx, P, cl, R), dc+1))
+					if dc>=5:
+						cv2.circle(image, (int(cX), int(cY)), int(radius),	(0, 0, 255), 3)
+						cntlist.append(cv2.boundingRect(c))
+
+			if not matched:
+				xx = np.matrix('0. 0. 0. 0.').T 
+				P = np.matrix(np.eye(4))*10 # initial uncertainty
+				list_currentkalman.append((kalman_xy(xx, P, cl, R), 0))
+			
+		for (xx, P), dc in list_prevkalman:
+			if dc > 5:
+				cv2.circle(image, (int(xx[0][0]), int(xx[1][0])), 10, (255, 0, 0), 3)
+
+		list_prevkalman = list_currentkalman
 		new_image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
 		cv2.imshow("Image", new_image)
 		# show the output image
-		return cntlist
+		return cntlist, list_prevkalman, list_currentkalman
 
 point_publisher()
