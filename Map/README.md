@@ -1,7 +1,9 @@
 Documentation:
 
 Name of topic : /listener 
+
 Messagetype is std_msgs/Float64MultiArray.msg
+
 See: http://docs.ros.org/melodic/api/std_msgs/html/index-msg.html for details.
 Pass coordinates as x,y in the Message.
 
