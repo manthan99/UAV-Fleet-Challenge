@@ -343,8 +343,6 @@ void scan_main(ros::NodeHandle nh)
 
         int w = navigate(nh,pose);
 
-        land(nh);
-
         if (w==1)
         {
           ROS_INFO(" Reached the Search Height ");
@@ -374,6 +372,9 @@ void scan_main(ros::NodeHandle nh)
  	{
  		ROS_INFO(" FAILED TO REACH SIP ");
  	}
+
+  bool z = land(nh);
+  
 }
 
 int main(int argc, char** argv)
