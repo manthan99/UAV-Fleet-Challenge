@@ -27,7 +27,8 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
     min_node = 0
     end_nodes = []
     for i in range(len(pos_array)):
-        distance = math.sqrt(math.pow(pos_array[i].x - curr_pos.x, 2) + math.pow(pos_array[i].y - curr_pos.y, 2))
+        #distance = math.sqrt(math.pow(pos_array[i].x - curr_pos.x, 2) + math.pow(pos_array[i].y - curr_pos.y, 2))
+        distance = geodesic((pos_array[i].x, pos_array[i].y), (curr_pos.x,curr_pos.y)).m
         if(len(node_array[i].neighbour) == 1):
             end_nodes.append(i)
             if(distance < min_dist):

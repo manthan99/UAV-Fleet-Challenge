@@ -7,6 +7,7 @@ from geometry_msgs.msg import Point
 from waypoint_generator.msg import point_list
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Twist
+from geopy.distance import geodesic
 
 
 pos_list = []
@@ -55,7 +56,7 @@ def path():
 
     for i in range(len(pos_list)):
         for j in range(i + 1, len(pos_list)):
-            edge.append(AHP.Edge(i, j, math.sqrt((pos_list[i].x - pos_list[j].x)**2 + (pos_list[i].y - pos_list[j].y)**2)))
+            edge.append(AHP.Edge(i, j, geodesic((pos_list[i].x, pos_list[i].y), (pos_list[j].x,pos_list[j].y)).m ))
 
     for e in edge:
         pass
