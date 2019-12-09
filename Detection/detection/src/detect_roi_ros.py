@@ -76,7 +76,7 @@ def kalman(x, P, measurement, R, motion, Q, F, H):
 def point_publisher():
 	
 	################## CHANGE VIDEO FOR CAMERA Stream
-	cap = cv2.VideoCapture("/home/debjoy/A_projects/interiit/vids_n_pics/cropped_new1.avi")
+	cap = cv2.VideoCapture("/home/debjoy/A_projects/interiit/vids_n_pics/vnc1.avi")
 
 	# Check if camera opened successfully
 	if (cap.isOpened() == False): 
@@ -152,7 +152,7 @@ def main_func(frame, list_prevkalman, list_currentkalman):
 	cntlist = []
 
 	if True:
-
+		# print(frame.shape)
 		image = frame[:1000, :, :]
 		#image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
 		cv2.imshow("frame",image)
@@ -249,6 +249,7 @@ def main_func(frame, list_prevkalman, list_currentkalman):
 			for (xx, P), dc in list_prevkalman:
 				# print("inside")
 				lcv = P[:2, :2]
+				# print(lcv)
 				t = np.array([cX-xx[0][0], cY - xx[1][0]]).reshape((1,2))
 				lpp = np.matmul(np.matmul(t, lcv), t.T)
 				# print("\n\n")

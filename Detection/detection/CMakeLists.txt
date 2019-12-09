@@ -108,7 +108,6 @@ catkin_package(
    INCLUDE_DIRS include
    LIBRARIES detection
    CATKIN_DEPENDS geometry_msgs roscpp rospy
-   DEPENDS system_lib
 )
 
 ###########
