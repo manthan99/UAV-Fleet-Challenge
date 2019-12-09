@@ -10,9 +10,9 @@ import tf
 
 def talker():
     pub = rospy.Publisher('/some_topic', point_list, queue_size=10)
-    gps = rospy.Publisher('/drone1/mavros/global_position/global', NavSatFix, queue_size=10)
-    height = rospy.Publisher('/drone1/mavros/local_position/pose',  PoseStamped, queue_size=10)
-    compass_hdg = rospy.Publisher('/drone1/mavros/global_position/compass_hdg', Float64, queue_size=10)
+    # gps = rospy.Publisher('/drone1/mavros/global_position/global', NavSatFix, queue_size=10)
+    # height = rospy.Publisher('/drone1/mavros/local_position/pose',  PoseStamped, queue_size=10)
+    # compass_hdg = rospy.Publisher('/drone1/mavros/global_position/compass_hdg', Float64, queue_size=10)
 
     rospy.init_node('talker', anonymous=True)
     r = rospy.Rate(10)  # 10hz
@@ -40,32 +40,32 @@ def talker():
     msg.points = [point1, point2, point3, point4, point5, point6]
 
     # GPS
-    navsat = NavSatFix()
-    navsat.latitude = 0.00
-    navsat.longitude = 0.00
-    navsat.altitude = 30.00
+    # navsat = NavSatFix()
+    # navsat.latitude = 0.00
+    # navsat.longitude = 0.00
+    # navsat.altitude = 30.00
 
-    # heading_angle
-    heading_angle = Float64(0.0)
+    # # heading_angle
+    # heading_angle = Float64(0.0)
 
-    pose = PoseStamped()
-    pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = "map"
-    pose.pose.position.x = 10
-    pose.pose.position.y = 10
-    pose.pose.position.z = 10.0                 # only this used in subscriber
+    # pose = PoseStamped()
+    # pose.header.stamp = rospy.Time.now()
+    # pose.header.frame_id = "map"
+    # pose.pose.position.x = 10
+    # pose.pose.position.y = 10
+    # pose.pose.position.z = 10.0                 # only this used in subscriber
 
-    quaternion = tf.transformations.quaternion_from_euler(0, 0, 10)
-    pose.pose.orientation.x = quaternion[0]
-    pose.pose.orientation.y = quaternion[1]
-    pose.pose.orientation.z = quaternion[2]
-    pose.pose.orientation.w = quaternion[3]
+    # quaternion = tf.transformations.quaternion_from_euler(0, 0, 10)
+    # pose.pose.orientation.x = quaternion[0]
+    # pose.pose.orientation.y = quaternion[1]
+    # pose.pose.orientation.z = quaternion[2]
+    # pose.pose.orientation.w = quaternion[3]
 
     while not rospy.is_shutdown():
         # rospy.loginfo(msg)
-        gps.publish(navsat)
-        compass_hdg.publish(heading_angle)
-        height.publish(pose)
+        # gps.publish(navsat)
+        # compass_hdg.publish(heading_angle)
+        # height.publish(pose)
         pub.publish(msg)
         r.sleep()
 

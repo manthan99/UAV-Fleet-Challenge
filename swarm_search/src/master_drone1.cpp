@@ -343,6 +343,8 @@ void scan_main(ros::NodeHandle nh)
 
         int w = navigate(nh,pose);
 
+        land(nh);
+
         if (w==1)
         {
           ROS_INFO(" Reached the Search Height ");
