@@ -4,6 +4,7 @@
 #include "geodetic_conv.hpp"
 #include "sensor_msgs/NavSatFix.h"
 #include "geometry_msgs/Point.h"
+#include <geometry_msgs/Twist.h>
 #include "waypoint_generator/point_list.h"
 #include "geometry_msgs/PoseStamped.h"
 #include <std_msgs/Float64.h>
@@ -109,9 +110,9 @@ void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_po
 }
 
 ros::Publisher waypoint_pub;
-void statusCallback(const geometry_msgs::Twist data)
+void statusCallback(const geometry_msgs::Twist::ConstPtr& data)
 {
-	if (data.linear.y == 1)
+	if (data->linear.y == 1)
 	{
 		waypoint_generator::point_list final_target_points_gps;
 		for (auto i=ROI_list.begin(); i!=ROI_list.end(); i++)
@@ -140,12 +141,12 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "ROI_publisher");
 	ros::NodeHandle n;
 	
-	ros::Subscriber frame_point_sub = n.subscribe("/some_topic", 1000, framePointCallback);
+	ros::Subscriber frame_point_sub = n.subscribe("/drone1/some_topic", 1000, framePointCallback);
 	ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
 	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
   	ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
   	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
-  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/chatter", 1000);
+  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone1/ROI_flow", 1000);
 
     ros::Rate loop_rate(20);
     while( ros::ok )
