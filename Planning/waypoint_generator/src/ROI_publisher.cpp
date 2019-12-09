@@ -24,6 +24,8 @@ bool GPS_received, heading_received, height_received, frameToGPS;
 
 geometry_msgs::PoseStamped current_pos;
 
+std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
+
 // GPS coordinate received 
 double lat, lon, alt;
 void globalCallback(const sensor_msgs::NavSatFix::ConstPtr& msg)
@@ -56,7 +58,7 @@ void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 // converting that to distance in m
 // finding cosine in direction of N and E 
 // using N and E to find 
-ros::Publisher waypoint_pub;
+
 waypoint_generator::point_list frame_points_gps;
 void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_points)
 {
@@ -95,7 +97,6 @@ void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_po
 		frame_points_gps.points.push_back(temp_point);
 	}	
 
-	std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
 	double scale = 0.00001;
 	for (int i=0; i<frame_points_gps.points.size(); i++)
 	{
@@ -105,25 +106,32 @@ void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_po
 		double lon_scaled = (int)(lon/scale) * scale;
 		ROI_list[{lat_scaled, lon_scaled}].push_back({lat, lon});
 	}
+}
 
-	waypoint_generator::point_list final_target_points_gps;
-	for (auto i=ROI_list.begin(); i!=ROI_list.end(); i++)
+ros::Publisher waypoint_pub;
+void statusCallback(const geometry_msgs::Twist data)
+{
+	if (data.linear.y == 1)
 	{
-		geometry_msgs::Point temp;
-		double lat_final=0, lon_final=0;
-		for (int j=0; j<i->second.size(); j++)
+		waypoint_generator::point_list final_target_points_gps;
+		for (auto i=ROI_list.begin(); i!=ROI_list.end(); i++)
 		{
-			lat_final += i->second[j].first;
-			lon_final += i->second[j].second;
+			geometry_msgs::Point temp;
+			double lat_final=0, lon_final=0;
+			for (int j=0; j<i->second.size(); j++)
+			{
+				lat_final += i->second[j].first;
+				lon_final += i->second[j].second;
+			}
+			lat_final /= i->second.size();
+			lon_final /= i->second.size();
+			temp.y = lon_final;
+			temp.x = lat_final;
+			final_target_points_gps.points.push_back(temp);
+			// cout<<"Final points: "<< std::fixed << std::setprecision(8)<<temp.x<<" "<<temp.y<<endl;
 		}
-		lat_final /= i->second.size();
-		lon_final /= i->second.size();
-		temp.y = lon_final;
-		temp.x = lat_final;
-		final_target_points_gps.points.push_back(temp);
-		// cout<<"Final points: "<< std::fixed << std::setprecision(8)<<temp.x<<" "<<temp.y<<endl;
+		waypoint_pub.publish(final_target_points_gps);
 	}
-	waypoint_pub.publish(final_target_points_gps);
 }
 
 int main(int argc, char **argv)
@@ -136,7 +144,7 @@ int main(int argc, char **argv)
 	ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
 	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
   	ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
-
+  	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
   	waypoint_pub = n.advertise<waypoint_generator::point_list>("/chatter", 1000);
 
     ros::Rate loop_rate(20);
