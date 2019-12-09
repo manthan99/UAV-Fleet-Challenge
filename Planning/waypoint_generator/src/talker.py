@@ -13,13 +13,15 @@ def talker():
     # gps = rospy.Publisher('/drone1/mavros/global_position/global', NavSatFix, queue_size=10)
     # height = rospy.Publisher('/drone1/mavros/local_position/pose',  PoseStamped, queue_size=10)
     # compass_hdg = rospy.Publisher('/drone1/mavros/global_position/compass_hdg', Float64, queue_size=10)
-    pub = rospy.Publisher('/drone1/chatter', point_list, queue_size=10)
-
+    pub0 = rospy.Publisher('/drone0/chatter', point_list, queue_size=10)
+    pub1 = rospy.Publisher('/drone1/chatter', point_list, queue_size=10)
+    pub2 = rospy.Publisher('/drone2/chatter', point_list, queue_size=10)
+    pub3 = rospy.Publisher('/drone3/chatter', point_list, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     r = rospy.Rate(10)  # 10hz
 
     # frame points
-    msg = point_list()
+    msg0 = point_list()
     point1 = Point()  # bottom right
     point1.x = -35.363359
     point1.y = 149.164596
@@ -29,16 +31,44 @@ def talker():
     point3 = Point()  # top right
     point3.x = -35.363377
     point3.y = 149.164678
-    # point4 = Point()  # bottom left
-    # point4.x = 360 + 100
-    # point4.y = 640 - 100
-    # point5 = Point()  # 0
-    # point5.x = 360 + 110
-    # point5.y = 640 + 110
     point4 = Point()  # pi
     point4.x = 0
     point4.y = 0
-    msg.points = [point1, point2, point3, point4]
+    msg0.points = [point1, point2, point3, point4]
+
+    msg1 = point_list()
+    point1.x= 0
+    point1.y= 0
+    point2.x= 0
+    point2.y= 0
+    point3.x= 0
+    point3.y= 0
+    point4.x= 0
+    point4.y= 0
+    msg1.points = [point1, point2, point3, point4]
+
+    msg2 = point_list()
+    point1.x= 0
+    point1.y=0
+    point2.x= 0
+    point2.y=0
+    point3.x= 0
+    point3.y=0
+    point4.x= 0
+    point4.y= 0
+    msg2.points = [point1, point2, point3, point4]
+
+    msg3 = point_list()
+    point1.x= 0
+    point1.y=0
+    point2.x= 0
+    point2.y=0
+    point3.x= 0
+    point3.y=0
+    point4.x= 0 
+    point4.y= 0
+    msg3.points = [point1, point2, point3, point4]
+
 
     # GPS
     # navsat = NavSatFix()
@@ -67,7 +97,10 @@ def talker():
         # gps.publish(navsat)
         # compass_hdg.publish(heading_angle)
         # height.publish(pose)
-        pub.publish(msg)
+        pub0.publish(msg0)
+        pub1.publish(msg1)
+        pub2.publish(msg2)
+        pub3.publish(msg3)
         r.sleep()
 
 if __name__ == '__main__':
