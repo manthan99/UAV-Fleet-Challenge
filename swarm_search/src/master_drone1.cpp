@@ -23,6 +23,7 @@
 
 #include <swarm_search/sip_goal.h>
 #include <swarm_search/point_list.h>
+#include <swarm_search/local_flags.h>
 
 using namespace std;
 
@@ -50,23 +51,24 @@ int time_tolerance_to_destination = 100000;
 
 sensor_msgs::NavSatFix current_pose; //current drone pose
 geographic_msgs::GeoPoseStamped pose; //target pose - updated in function setDestination
-geometry_msgs::Twist drone_status;
-geometry_msgs::Twist flags;
+// geometry_msgs::Twist drone_status;
+
 swarm_search::point_list arr;
+swarm_search::sip_goal master_goal;
+swarm_search::local_flags flags;
 
 /*
-flags.linear.x = scan_flag
-flags.linear.y = between scanning and search
-flags.linear.z = search_flag
-flags.angular.x = targets_found
-flags.angular.y = recovery1_flag
-flags.angular.z = recovery2_flag
+flags.scan_flag.data 
+flags.transition_s2s.data - transition scan to search
+flags.search_flag.data 
+flags.recovery1_flag.data 
+flags.recovery2_flag.data 
+flags.wait.data // drone busy
 */
 
 float initial_takeoff_height = 0;
 int first = 0;
 
-swarm_search::sip_goal master_goal;
 
 void state_cb(const mavros_msgs::State::ConstPtr& msg)
 {
@@ -282,7 +284,7 @@ int search_main(ros::NodeHandle nh)
 void scan_main(ros::NodeHandle nh)
 {
 
-  ros::Publisher flags_pub = nh.advertise<geometry_msgs::Twist>("/drone1/flags", 10);
+  ros::Publisher flags_pub = nh.advertise<swarm_search::local_flags>("/drone1/flags", 10);
   
 	pose.header.stamp = ros::Time::now();
   pose.header.frame_id = "base_link";
@@ -305,7 +307,7 @@ void scan_main(ros::NodeHandle nh)
     //drone_status.angular.x = ROI_scan_flag;
 		// when ROI_scan_flag ==1 : start ROI_detection code
 
-    flags.linear.x = 1; 
+    flags.scan_flag.data = 1; 
     flags_pub.publish(flags); //scanning should start here
 
    	sleep(5);
@@ -326,8 +328,8 @@ void scan_main(ros::NodeHandle nh)
   		ROS_INFO(" Itteration 1 Scanning Complete ");
   		//ROS_INFO(" Requesting ROI Scanning to stop and pass coordinated to Multi-Goal Path Planner ")
   		//ROI_scan_flag = 0;
-      flags.linear.x = 0;//ROI_scan_flag;
-      flags.linear.y = 1; // between scanning and search
+      flags.scan_flag.data = 0;//ROI_scan_flag;
+      flags.transition_s2s.data = 1; // between scanning and search
       flags_pub.publish(flags);
   		// when ROI_scan_flag == 0 : stop ROI_detection code
 
@@ -349,8 +351,8 @@ void scan_main(ros::NodeHandle nh)
         if (w==1)
         {
           ROS_INFO(" Reached the Search Height ");
-          flags.linear.y = 0; //between scanning and search over
-          flags.linear.z = 1; // search starts
+          flags.transition_s2s.data = 0; //between scanning and search over
+          flags.search_flag.data = 1; // search starts
           flags_pub.publish(flags);
           sleep(1);
           int k = search_main(nh);    // k = 1 means all detection is completed and all four are found
@@ -361,7 +363,7 @@ void scan_main(ros::NodeHandle nh)
     	else
     	{
     		ROS_INFO(" Poor ROI Confidence - Requesting Recovery Mode 1 ");
-    		flags.angular.y = 1;//recovery1_flag = 1;
+    		flags.recovery1_flag.data = 1;//recovery1_flag = 1;
     		flags_pub.publish(flags);
     	}
  		}
@@ -387,27 +389,27 @@ int main(int argc, char** argv)
 
   // the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(20.0);
+
+  // mavros topics
   ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/drone1/mavros/state", 10, state_cb);
-  //ros::Publisher global_pos_pub = nh.advertise<mavros_msgs::GlobalPositionTarget>("/drone1/mavros/setpoint_position/global", 10);
   ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global", 10);
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
  
-  ros::Subscriber nextGoal = nh.subscribe<geographic_msgs::GeoPoseStamped>("/master/drone1/next_goal/pose", 10, setDestination);
-  // ros::Subscriber receive_master_cmd = nh.subscribe<mavros_msgs::GlobalPositionTarget>("/master/drone1/received_cmd", 10, receive_cmd);
-  ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
-  //ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone0/drone_diag", 10)
-
+  // master and ROI topics
   ros::Subscriber groundStation_value = nh.subscribe<swarm_search::sip_goal>("master/drone1/ground_msg",10,callback_sip);
   ros::Subscriber ROI_points = nh.subscribe<swarm_search::point_list>("/drone1/ROI_flow",10,roi_list);
+ 
+  //Diagonostic Feedback Topic 
+  // ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
+
+ 
   // allow the subscribers to initialize
 
-  flags.linear.x = 0;
-  flags.linear.y = 0;
-  flags.linear.z = 0;
-
-  flags.angular.x = 0;
-  flags.angular.y = 0;
-  flags.angular.z = 0;
+  flags.scan_flag.data = 0;
+  flags.transition_s2s.data = 0;
+  flags.search_flag.data = 0;
+  flags.recovery1_flag.data = 0;
+  flags.recovery2_flag.data = 0;
 
   ROS_INFO("INITIALISING...");
   for(int i=0; i<100; i++)
@@ -455,5 +457,6 @@ int main(int argc, char** argv)
   }
   ros::spinOnce();
   scan_main(nh);
- }}
+ }
+}
 
