@@ -1,32 +1,16 @@
-# Master code
-python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_ros.py
-# Visualisation
+# To setup multimaster: 
+roscore
+rosrun master_sync_fkie master_sync
+rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1
+
+# First visualise the SIP's
 python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_vis.py
+# To navigate to SIP
+python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_ros.py
 
-
-Output of etc/hosts:
-127.0.0.1	localhost
-127.0.1.1	shrey-HP-Pavilion-Notebook
-
-192.168.0.10 	odroid0
-192.168.0.11 	odroid1
-192.168.0.12 	odroid2
-192.168.0.13 	odroid3
-192.168.0.20 	tracer
-192.168.0.101 	manthan-Alienware-15-R3
-192.168.0.21 	carry-Alienware-15-R3
-192.168.0.186 	shrey-HP-Pavilion-Notebook
-192.168.0.61 	ayush-omen
-
-
-# The following lines are desirable for IPv6 capable hosts
-::1     ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-
-
+Sanity checks:
+1. Once ./drone*.sh launched in odroid check if data comes properly in master. Error may be because of ACM 0/99. Check ls /dev/ttyACM
+2. 
 
 Changes:  
 1. pluma ardupilot_ws/src/UAV_Fleet_Challenge/swarm_search/src/master_drone1.cpp --- Added guided things
@@ -34,3 +18,7 @@ Changes:
 3. ensure rostopic echo /drone*/mavros/global_position/global --- GPS data coming properly
 4. etc/hosts should have static ip of masters
 
+
+ground_station_ros:
+state1 - uptill publishing target SIP for all the drones
+state2 - 

@@ -67,6 +67,7 @@ flags.angular.z = recovery2_flag
 */
 
 float initial_takeoff_height = 0;
+int first = 0;
 
 swarm_search::sip_goal master_goal;
 
@@ -82,6 +83,11 @@ void state_cb(const mavros_msgs::State::ConstPtr& msg)
 void pose_cb(const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
   current_pose = *msg;
+  if( first == 0)
+  {
+    initial_takeoff_height = current_pose.altitude;
+    first = 1;
+  }
   // ROS_INFO("Latitude %f Longitude: %f Altitude: %f", current_pose.latitude, current_pose.longitude, current_pose.altitude);
 }
 
@@ -200,6 +206,7 @@ bool takeoff(ros::NodeHandle nh, float takeoff_alt_local)
     srv_takeoff.request.altitude = takeoff_alt_local;
     if(takeoff_cl.call(srv_takeoff)){
       ROS_INFO("takeoff sent %d", srv_takeoff.response.success);
+      sleep(10);
       return 1;
     }
     else{
@@ -207,7 +214,6 @@ bool takeoff(ros::NodeHandle nh, float takeoff_alt_local)
       return 0;
     }
 
-    sleep(10);
 }
 
 bool land(ros::NodeHandle nh)
@@ -217,16 +223,15 @@ bool land(ros::NodeHandle nh)
   if (land_client.call(srv_land) && srv_land.response.success)
   {
     ROS_INFO("land sent %d", srv_land.response.success);
+    sleep(10);
     return 1;
   }
-
   else
   {
     ROS_ERROR("Landing failed");
     ros::shutdown();                 /////////////////////////////////////////////////doubt here
     return 0;
   }
-  sleep(10);
 }
 
 
