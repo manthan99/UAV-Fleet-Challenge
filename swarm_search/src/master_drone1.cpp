@@ -421,20 +421,24 @@ int main(int argc, char** argv)
   }
 
   // // wait for FCU connection
+  while(ros::ok() && current_state.mode == "GUIDED")
+	{
+  // // wait for FCU connection
   while (ros::ok() && !current_state.connected)
   {
     ros::spinOnce();
     rate.sleep();
   }
 
-  while(!takeoff_done)
+  while(!takeoff_done && ros::ok())
   {
-    while(!armed)
+    while(!armed  && ros::ok() && current_state.mode == "GUIDED")
     {
       armed = arm_drone(nh);
+		ros::spinOnce();
     }
 
-    while( master_goal.takeoff_flag.data != 1 )
+    while( master_goal.takeoff_flag.data != 1  && ros::ok() && current_state.mode == "GUIDED")
     {
       armed = arm_drone(nh);
       cout << master_goal.takeoff_flag.data << endl;
@@ -443,13 +447,10 @@ int main(int argc, char** argv)
       ros::Duration(0.01).sleep();
       //wait for permission to take off
     }
-    sleep(0.5);
-    initial_takeoff_height = current_pose.altitude;
-    cout << """""""""""""""""""""""""""""""""""" << initial_takeoff_height << endl;
+
     takeoff_done = takeoff(nh, takeoff_alt);
   }
-
-
+  ros::spinOnce();
   scan_main(nh);
-}
+ }}
 

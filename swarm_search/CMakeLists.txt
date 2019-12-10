@@ -58,7 +58,6 @@ find_package(catkin REQUIRED COMPONENTS
   FILES
   sip_goal.msg
   point_list.msg
-  local_flags.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -234,3 +233,7 @@ target_link_libraries(master_drone2 ${catkin_LIBRARIES})
 
 add_executable(master_drone3 src/master_drone3.cpp)
 target_link_libraries(master_drone3 ${catkin_LIBRARIES})
+
+#add_executable(navigate src/navigate.cpp)
+#target_link_libraries(navigate ${catkin_LIBRARIES})
+

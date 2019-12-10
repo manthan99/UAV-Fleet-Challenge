@@ -9,7 +9,7 @@ roslaunch swarm_search apm0.launch &
 sleep 4 
 rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1 &
 sleep 2 
-rosrun master_sync_fkie master_sync &
+rosrun master_sync_fkie master_sync _sync_topics:=['/test','master/drone0/ground_msg','/drone0/chatter','/drone0/mavros/global_position/global','/drone1/mavros/global_position/global','/drone2/mavros/global_position/global','/drone3/mavros/global_position/global','/drone0/mavros/state','/drone1/mavros/state','/drone2/mavros/state','/drone3/mavros/state'] &
 sleep 1
 roslaunch swarm_search master0.launch &
 sleep 1
