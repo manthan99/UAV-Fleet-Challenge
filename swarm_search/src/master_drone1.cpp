@@ -29,32 +29,29 @@ using namespace std;
 //Set global variables
 mavros_msgs::State current_state;
 
-float takeoff_alt = 1.5;
+double takeoff_alt = 1.5;
+double search_altitude = 0.75;
 double goal_tolerance = 0.002;
 
 bool connected;
 bool armed = 0;
 bool reached_target;
+int detected_points = 0;
+
 
 bool takeoff_drone; // to tell when to takeoff 
 bool land_drone; // to tell when to land
 
 bool takeoff_done = 0;
 bool land_done;
-
 bool ROI_scan_flag = 0;
-
 double delta_to_destination;
 int time_tolerance_to_destination = 100000;
 
 sensor_msgs::NavSatFix current_pose; //current drone pose
-
 geographic_msgs::GeoPoseStamped pose; //target pose - updated in function setDestination
-
 geometry_msgs::Twist drone_status;
-
 geometry_msgs::Twist flags;
-
 swarm_search::point_list arr;
 
 /*
@@ -108,10 +105,10 @@ void callback_sip(const swarm_search::sip_goal::ConstPtr& msg)
   master_goal = *msg;
 }
 
-void receive_cmd(const mavros_msgs::GlobalPositionTarget::ConstPtr& msg)
-{
+// void receive_cmd(const mavros_msgs::GlobalPositionTarget::ConstPtr& msg)
+// {
 
-}
+// }
 
 double haversine(double lat1, double lon1, double lat2, double lon2) 
 { 
@@ -198,7 +195,7 @@ bool arm_drone(ros::NodeHandle nh)
   }
 }
 
-bool takeoff(ros::NodeHandle nh, float takeoff_alt_local)
+bool takeoff(ros::NodeHandle nh, double takeoff_alt_local)
 {
     //request takeoff
     ros::ServiceClient takeoff_cl = nh.serviceClient<mavros_msgs::CommandTOL>("/drone1/mavros/cmd/takeoff");
@@ -245,6 +242,7 @@ int check_ROI_confidence()
 void roi_list(const swarm_search::point_list::ConstPtr& msg)
 {
   arr = *msg;
+
   // cout << sizeof(arr)/sizeof(random_pt) <<endl;
   // cout << arr.points[0] <<endl;
 }
@@ -253,18 +251,18 @@ int search_main(ros::NodeHandle nh)
 {
   int k = 0;
 
-  for(int i=0;arr.points[i].x!=0;i++)
+  for(int i=0; (int)arr.points[i].x !=0; i++)
+    // *** Expects last point as 0,0 to stop search *** //
   {
     pose.header.stamp = ros::Time::now();
     pose.header.frame_id = "base_link";
     pose.pose.position.latitude = arr.points[i].x;
     pose.pose.position.longitude = arr.points[i].y;
-    pose.pose.position.altitude = current_pose.altitude;
-    pose.pose.orientation.w = 1.0;
+    pose.pose.position.altitude = search_altitude; //current_pose.altitude;
+    pose.pose.orientation.w = 1.0; // *DOUBT*
     k = navigate(nh,pose);
     sleep(5);
-    int detected_points = 0;
-    if(detected_points >=4)
+    if(detected_points >= 4)
     {
       return 1;
     }
@@ -273,8 +271,8 @@ int search_main(ros::NodeHandle nh)
   ROS_INFO("Main search is now over");
   return 0;
 
+  // Function Defination : 
   // ek callback hoga yaha se that will take ROI points and go there.
-
 	// multi goal path planning se waypoints leke list me rakaho
 	// ek ek kar ke navigate(pose) : pose update karte raho when reached prev target
 	// sleep for some time so that sufficient frames can be taken
@@ -395,7 +393,7 @@ int main(int argc, char** argv)
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
  
   ros::Subscriber nextGoal = nh.subscribe<geographic_msgs::GeoPoseStamped>("/master/drone1/next_goal/pose", 10, setDestination);
-  ros::Subscriber receive_master_cmd = nh.subscribe<mavros_msgs::GlobalPositionTarget>("/master/drone1/received_cmd", 10, receive_cmd);
+  // ros::Subscriber receive_master_cmd = nh.subscribe<mavros_msgs::GlobalPositionTarget>("/master/drone1/received_cmd", 10, receive_cmd);
   ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
   //ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone0/drone_diag", 10)
 

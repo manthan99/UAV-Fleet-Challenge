@@ -51,6 +51,10 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
         next_node = node_array[prev_node].neighbour[0].name
 
     order_waypt.append(pos_array[end_node])
+    final_point = Point()
+    final_point.x = 0;
+    final_point.y = 0;
+    order_waypt.append(final_point)
     return order_waypt
 
 
