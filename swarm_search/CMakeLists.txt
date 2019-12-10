@@ -58,6 +58,7 @@ find_package(catkin REQUIRED COMPONENTS
   FILES
   sip_goal.msg
   point_list.msg
+  local_flags.msg
  )
 
 ## Generate services in the 'srv' folder
