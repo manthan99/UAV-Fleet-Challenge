@@ -158,6 +158,7 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
       // cout << "Delta to Destination : "<< delta_to_destination << endl;
       // cout << "Height Difference Remaining : " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
+      ROS_INFO("Delta to Destination: %f  Delta to Altitude: %f ", delta_to_destination, abs(pose1.pose.position.altitude-current_pose.altitude));
       if( (delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) /////////////////////change this//////////
       {
         ROS_INFO("Reached at the target position");  
@@ -394,13 +395,13 @@ int main(int argc, char** argv)
   ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/drone1/mavros/state", 10, state_cb);
   ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global", 10);
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
- 
+
   // master and ROI topics
   ros::Subscriber groundStation_value = nh.subscribe<swarm_search::sip_goal>("master/drone1/ground_msg",10,callback_sip);
   ros::Subscriber ROI_points = nh.subscribe<swarm_search::point_list>("/drone1/ROI_flow",10,roi_list);
  
   //Diagonostic Feedback Topic 
-  // ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
+  ros::Publisher drone_status_pub = nh.advertise<geometry_msgs::Twist>("/master/drone1/drone_status", 10);
 
  
   // allow the subscribers to initialize
@@ -435,25 +436,39 @@ int main(int argc, char** argv)
     rate.sleep();
   }
 
+
   while(!takeoff_done && ros::ok())
   {
     while(!armed  && ros::ok() && current_state.mode == "GUIDED")
     {
       armed = arm_drone(nh);
-		ros::spinOnce();
+    ros::spinOnce();
     }
-
-    while( master_goal.takeoff_flag.data != 1  && ros::ok() && current_state.mode == "GUIDED")
+   
+    while( master_goal.takeoff_flag.data != true  && ros::ok() && current_state.mode == "GUIDED")
     {
+      cout <<"***********************" <<master_goal.takeoff_flag.data << endl;
       armed = arm_drone(nh);
       cout << master_goal.takeoff_flag.data << endl;
-      ROS_INFO("Waiting for the permission to take off");
+      //ROS_INFO("Waiting for the permission to take off");
       ros::spinOnce();
       ros::Duration(0.01).sleep();
       //wait for permission to take off
     }
+  
+  ros::ServiceClient takeoff_cl = nh.serviceClient<mavros_msgs::CommandTOL>("/drone1/mavros/cmd/takeoff");
+  mavros_msgs::CommandTOL srv_takeoff;
+  srv_takeoff.request.altitude = takeoff_alt;
+  if(takeoff_cl.call(srv_takeoff)){
+    ROS_INFO("takeoff sent %d", srv_takeoff.response.success);
+    takeoff_done = 1;
+   }else{
+    ROS_ERROR("Failed Takeoff");
+    return -1;
+  }
 
-    takeoff_done = takeoff(nh, takeoff_alt);
+  sleep(10);
+   // takeoff_done = takeoff(nh, takeoff_alt);
   }
   ros::spinOnce();
   scan_main(nh);
