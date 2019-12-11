@@ -28,15 +28,15 @@ geometry_msgs::PoseStamped current_pos;
 std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
 
 // GPS coordinate received 
-// double lat, lon, alt;
-// void globalCallback(const sensor_msgs::NavSatFix::ConstPtr& msg)
-// {
-// 	// if(!GPS_received)
-//  	lat=msg->latitude;
-//  	lon=msg->longitude;
-//  	alt=msg->altitude;
-// 	// cout<<"GPS received: "<<lat<<" "<<lon<<" "<<alt<<endl; 	
-// }
+double lat, lon, alt;
+void globalCallback(const sensor_msgs::NavSatFix::ConstPtr& msg)
+{
+	// if(!GPS_received)
+ 	lat=msg->latitude;
+ 	lon=msg->longitude;
+ 	alt=msg->altitude;
+	// cout<<"GPS received: "<<lat<<" "<<lon<<" "<<alt<<endl; 	
+}
 
 // heading angle received
 double heading_angle = 0.0;
@@ -63,18 +63,17 @@ void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 waypoint_generator::point_list frame_points_gps;
 void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_points)
 {
-	double lat = frame_points->points[0].x;
-	double lon = frame_points->points[0].y;
 	geodetic_converter::GeodeticConverter conv;
-	conv.initialiseReference(lat,lon,0);
+	conv.initialiseReference(lat,lon,alt);
+	
 	// cout<<"length_per_pixel: "<<length_per_pixel<<endl;
 	double alpha = 0;
 	double lat_temp, lon_temp, alt_temp;
 	double distance_N, distance_E, distance;
-	double length_per_pixel = 2*height*tan(FOV/2)/resolution_y; //FOV or focal length
+	double length_per_pixel = 2*height*tan(FOV/2)/resolution_y;
 	
 	geometry_msgs::Point temp_point;
-	for (int i=1; i<frame_points->points.size(); i++)
+	for (int i=0; i<frame_points->points.size(); i++)
 	{
 		distance = length_per_pixel*sqrt(pow(frame_points->points[i].x-resolution_x/2, 2)+(frame_points->points[i].y-resolution_y/2, 2));
 		// cout<<"distance: "<<distance<<endl;
@@ -143,7 +142,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 	
 	ros::Subscriber frame_point_sub = n.subscribe("/drone1/some_topic", 1000, framePointCallback);
-	// ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
+	ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
 	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
   	ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
   	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
