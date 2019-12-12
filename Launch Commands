@@ -3,6 +3,11 @@ roscore
 rosrun master_sync_fkie master_sync
 rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1
 
+# ssh to odroid
+drone1 a.k.a ssh -X odroid1@192.168.0.11
+cd ardupilot_ws/src/UAV
+./drone1.sh
+
 # First visualise the SIP's
 python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_vis.py
 # To navigate to SIP
