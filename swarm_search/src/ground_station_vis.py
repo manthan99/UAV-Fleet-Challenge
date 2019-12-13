@@ -22,7 +22,6 @@ global drone_start
 drone_input = [[22.3146762, 87.3082779], [22.3146782, 87.3082744], [22.3146692, 87.3082734], [22.3146758, 87.3082533]]
 drone_start = drone_input[0]
 
-
 global connected0
 global armed0
 global state0
@@ -180,7 +179,7 @@ def quadrant_SIP(sq_c):
     """
     Input list containing 4 corners of a sub quadrant
     Returns a list containg the 4 SIPs of that sub quadrant
-    Sub-quadrant corners in format - 1X2 
+    Sub-quadrant corners in format - 1X2
                                                                      XXX
                                                                      0X3
     SIP format - X2X
@@ -243,9 +242,31 @@ def plot(in_array, in_SIP, drone_pos):
     # plt.show()
 
 
+def plot1(in_array, in_SIP, drone_pos):
+    """
+    Function to plot the SIP using matplotlib
+    """
+    x1 = []
+    y1 = []
+
+    for i in range(0, 4):
+        for j in range(0, 4):
+            x1.append(in_array[i][j][0])
+            y1.append(in_array[i][j][1])
+
+    plt.scatter(x1, y1, color=(0.0, 1.0, 0.0))
+    j = 4
+    for i in range(0, len(in_SIP)):
+        plt.scatter(in_SIP[i][0][0], in_SIP[i][0][1], color=(i / 4.0, 0.0, j / 4.0))
+        plt.scatter(in_SIP[i][1][0], in_SIP[i][1][1], color=(i / 4.0, 0.0, j / 4.0))
+        plt.scatter(drone_pos[i][0], drone_pos[i][1], color=(i / 4.0, 0.0, j / 4.0))
+        j = j - 1
+    plt.show()
+
+
 def compute_gps_sip(input_square, drone_start):
     """
-    This is the function which returns the GPS_SIPs when input is 4 GPS vertices of 
+    This is the function which returns the GPS_SIPs when input is 4 GPS vertices of
     the arena and the location of drone 0
     """
     local_origin = [0, 0]
@@ -306,6 +327,17 @@ def assign_sip(gps_sip, drone_input):
     return(target_sip)
 
 
+def assign_sip1(gps_sip, drone_input):
+
+    target_sip = []
+
+    for i in range(0, len(drone_input)):
+        target_sip.append(find_start_end_SIP(gps_sip[i], drone_input[i]))
+
+    plot1(gps_sip, target_sip, drone_input)
+    return(target_sip)
+
+
 def callback0(data):
 
     global drone_input
@@ -319,6 +351,7 @@ def callback0(data):
 def callback1(data):
 
     global drone_input
+    print(data.latitude)
     drone_input[1][0] = data.latitude
     drone_input[1][1] = data.longitude
 
@@ -351,6 +384,41 @@ def execute():
         start_time = rospy.get_time()
         i = 1
 
+    # target_0 = sip_goal()
+    # target_1 = sip_goal()
+    # target_2 = sip_goal()
+    # target_3 = sip_goal()
+
+    # target_0.takeoff_flag.data = 0
+    # target_1.takeoff_flag.data = 0
+    # target_2.takeoff_flag.data = 0
+    # target_3.takeoff_flag.data = 0
+
+    # gps_sip = compute_gps_sip(input_square,drone_start)
+    gps_sip = compute_gps_sip(input_square, drone_start)
+    target_sip = assign_sip1(gps_sip, drone_input)
+
+    # target_0.sip_start.x = target_sip[0][0][0]
+    # target_0.sip_start.y = target_sip[0][0][1]
+    # target_0.sip_end.x = target_sip[0][1][0]
+    # target_0.sip_end.y = target_sip[0][1][1]
+
+    # target_1.sip_start.x = target_sip[1][0][0]
+    # target_1.sip_start.y = target_sip[1][0][1]
+    # target_1.sip_end.x = target_sip[1][1][0]
+    # target_1.sip_end.y = target_sip[1][1][1]
+
+    # target_2.sip_start.x = target_sip[2][0][0]
+    # target_2.sip_start.y = target_sip[2][0][1]
+    # target_2.sip_end.x = target_sip[2][1][0]
+    # target_2.sip_end.y = target_sip[2][1][1]
+
+    # target_3.sip_start.x = target_sip[3][0][0]
+    # target_3.sip_start.y = target_sip[3][0][1]
+    # target_3.sip_end.x = target_sip[3][1][0]
+    # target_3.sip_end.y = target_sip[3][1][1]
+
+    # target_2.takeoff_flag.data = 1 ####### only for testing
     if((rospy.get_time() - start_time) > 5):
         target_1.takeoff_flag.data = 1
 
@@ -422,10 +490,12 @@ def state1(data):
     armed1 = data.armed
 
     if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j < 10)):
+        print("Entered: " + str(j))
         calculate_execute()
         j += 1
 
     if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j >= 10)):
+        print("Staring to execute")
         execute()
 
 
@@ -440,6 +510,7 @@ def state2(data):
 def state3(data):
     global connected3
     global armed3
+    global start_mission
 
     connected3 = data.connected
     armed3 = data.armed

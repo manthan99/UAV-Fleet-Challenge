@@ -8,7 +8,7 @@
 #include "waypoint_generator/point_list.h"
 #include "geometry_msgs/PoseStamped.h"
 #include <std_msgs/Float64.h>
-// #include <swarm_search/local_flags.h>
+#include <swarm_search/local_flags.h>
 
 
 // #define M_PI 3.14159
@@ -28,7 +28,6 @@ bool GPS_received, heading_received, height_received, frameToGPS;
 geometry_msgs::PoseStamped current_pos;
 
 std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
-geometry_msgs::Twist flags;
 
 // GPS coordinate received 
 // double lat, lon, alt;
@@ -43,18 +42,17 @@ geometry_msgs::Twist flags;
 
 // heading angle received
 double heading_angle = 0.0;
-// void orientCallback(const std_msgs::Float64::ConstPtr& msg)
-// {
-// 	heading_angle = msg->data * M_PI/180.0;
-// 	// cout<<"Heading received: "<<heading_angle<<endl;
-// }
+void orientCallback(const std_msgs::Float64::ConstPtr& msg)
+{
+	heading_angle = msg->data * M_PI/180.0;
+	// cout<<"Heading received: "<<heading_angle<<endl;
+}
 
 // height callback
 void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 {
 	current_pos = *position;
 	height = current_pos.pose.position.z;
-	height = 3;
 	// cout<<"Height received: "<<height<<endl;
 
 }
@@ -67,67 +65,58 @@ void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 waypoint_generator::point_list frame_points_gps;
 void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_points)
 {
-	if (flags.linear.y <0.5 ) // will enter if flag is 1
+	double lat = frame_points->points[0].x;
+	double lon = frame_points->points[0].y;
+	geodetic_converter::GeodeticConverter conv;
+	conv.initialiseReference(lat,lon,0);
+	// cout<<"length_per_pixel: "<<length_per_pixel<<endl;
+	double alpha = 0;
+	double lat_temp, lon_temp, alt_temp;
+	double distance_N, distance_E, distance;
+	double length_per_pixel = 2*height*tan(FOV/2)/resolution_y; //FOV or focal length
+	
+	geometry_msgs::Point temp_point;
+	for (int i=1; i<frame_points->points.size(); i++)
 	{
-		
-		double lat = frame_points->points[0].x;
-		double lon = frame_points->points[0].y;
-		heading_angle = frame_points->points[0].z;
+		distance = length_per_pixel*sqrt(pow(frame_points->points[i].x-resolution_x/2, 2)+pow(frame_points->points[i].y-resolution_y/2, 2));
+		// cout<<"distance: "<<distance<<endl;
+		if((frame_points->points[i].y-resolution_y/2)!= 0)
+			alpha = atan((frame_points->points[i].x-resolution_x/2)/(frame_points->points[i].y-resolution_y/2));
+		else if((frame_points->points[i].x-resolution_x/2)>0)
+			alpha = M_PI/2;
+		else if((frame_points->points[i].x-resolution_x/2)<0 )
+			alpha = -M_PI/2;
+		else alpha = 0; 
+		// cout<<"α: "<<alpha<<endl;
+		if (frame_points->points[i].y-resolution_y/2 < 0)
+			distance *= (-1);
+		distance_E = distance*sin(M_PI-alpha+heading_angle);
+		distance_N = distance*cos(M_PI-alpha+heading_angle);    
+		// cout<<distance_N<<" "<<distance_E<<endl; 
 
+		conv.enu2Geodetic(distance_E, distance_N, 0, &lat_temp, &lon_temp, &alt_temp);
+		temp_point.x = lat_temp;
+		temp_point.y = lon_temp;
+		// cout << std::fixed << std::setprecision(8)<< "Lat: "<<lat_temp<<" Lon: "<<lon_temp<<endl;
+		frame_points_gps.points.push_back(temp_point);
+	}	
 
-		geodetic_converter::GeodeticConverter conv;
-		conv.initialiseReference(lat,lon,0);
-		// cout<<"length_per_pixel: "<<length_per_pixel<<endl;
-		double alpha = 0;
-		double lat_temp, lon_temp, alt_temp;
-		double distance_N, distance_E, distance;
-		double length_per_pixel = 2*height*tan(FOV/2)/resolution_y; //FOV or focal length
-		
-		geometry_msgs::Point temp_point;
-		for (int i=1; i<frame_points->points.size(); i++)
-		{
-			distance = length_per_pixel*sqrt(pow(frame_points->points[i].x-resolution_x/2, 2)+pow(frame_points->points[i].y-resolution_y/2, 2));
-			// cout<<"distance: "<<distance<<endl;
-			if((frame_points->points[i].y-resolution_y/2)!= 0)
-				alpha = atan((frame_points->points[i].x-resolution_x/2)/(frame_points->points[i].y-resolution_y/2));
-			else if((frame_points->points[i].x-resolution_x/2)>0)
-				alpha = M_PI/2;
-			else if((frame_points->points[i].x-resolution_x/2)<0 )
-				alpha = -M_PI/2;
-			else alpha = 0; 
-			if (frame_points->points[i].y-resolution_y/2 < 0)
-				distance *= (-1);
-			distance_E = distance*sin(M_PI-alpha+heading_angle);
-			distance_N = distance*cos(M_PI-alpha+heading_angle);    
-			cout<<"frame_points->points[i].x: "<<frame_points->points[i].x<<" frame_points->points[i].y: "<<frame_points->points[i].y<<
-			"α: "<<alpha<<"distance_N: "<<distance_N<<" distance_E: "<<distance_E<<endl; 
-
-			conv.enu2Geodetic(distance_E, distance_N, 0, &lat_temp, &lon_temp, &alt_temp);
-			temp_point.x = lat_temp;
-			temp_point.y = lon_temp;
-			// cout << std::fixed << std::setprecision(8)<< "Lat: "<<lat_temp<<" Lon: "<<lon_temp<<endl;
-			frame_points_gps.points.push_back(temp_point);
-		}	
-
-		double scale = 0.00001;
-		for (int i=0; i<frame_points_gps.points.size(); i++)
-		{
-			double lat = frame_points_gps.points[i].x;
-			double lon = frame_points_gps.points[i].y; 
-			double lat_scaled = (int)(lat/scale) * scale;
-			double lon_scaled = (int)(lon/scale) * scale;
-			ROI_list[{lat_scaled, lon_scaled}].push_back({lat, lon});
-		}
-		cout<<"Moving to next frame\n"<<endl;
+	double scale = 0.00001;
+	for (int i=0; i<frame_points_gps.points.size(); i++)
+	{
+		double lat = frame_points_gps.points[i].x;
+		double lon = frame_points_gps.points[i].y; 
+		double lat_scaled = (int)(lat/scale) * scale;
+		double lon_scaled = (int)(lon/scale) * scale;
+		ROI_list[{lat_scaled, lon_scaled}].push_back({lat, lon});
 	}
 }
 
 ros::Publisher waypoint_pub;
-void statusCallback(const geometry_msgs::Twist flags)
+void statusCallback(const swarm_search::local_flags flags)
 {
-	if (flags.linear.y > 0.5)
+	if (flags.transition_s2s == 1)
 	{
-		cout<<"Averaging started"<<endl;
 		waypoint_generator::point_list final_target_points_gps;
 		for (auto i=ROI_list.begin(); i!=ROI_list.end(); i++)
 		{
@@ -155,13 +144,12 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "ROI_publisher");
 	ros::NodeHandle n;
 	
-	ros::Subscriber frame_point_sub = n.subscribe("/drone1/probable_target_locations", 1000, framePointCallback);
-	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
-	
+	ros::Subscriber frame_point_sub = n.subscribe("/drone1/some_topic", 1000, framePointCallback);
 	// ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
-  	// ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
+	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
+  	ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
   	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
-  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone1/ROI_flow_initial", 1000);
+  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone1/ROI_flow", 1000);
 
     ros::Rate loop_rate(20);
     while( ros::ok )

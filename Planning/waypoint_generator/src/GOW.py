@@ -1,8 +1,6 @@
 import AHP
 import numpy as np
 import math
-from geopy.distance import geodesic
-from geometry_msgs.msg import Point
 
 
 class Node(object):
@@ -30,7 +28,7 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
     end_nodes = []
     for i in range(len(pos_array)):
         #distance = math.sqrt(math.pow(pos_array[i].x - curr_pos.x, 2) + math.pow(pos_array[i].y - curr_pos.y, 2))
-        distance = geodesic((pos_array[i].x, pos_array[i].y), (curr_pos.x, curr_pos.y)).m
+        distance = geodesic((pos_array[i].x, pos_array[i].y), (curr_pos.x,curr_pos.y)).m
         if(len(node_array[i].neighbour) == 1):
             end_nodes.append(i)
             if(distance < min_dist):
@@ -53,8 +51,10 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
         next_node = node_array[prev_node].neighbour[0].name
 
     order_waypt.append(pos_array[end_node])
-    last_point = Point()
-    order_waypt.append(last_point)
+    final_point = Point()
+    final_point.x = 0;
+    final_point.y = 0;
+    order_waypt.append(final_point)
     return order_waypt
 
 
