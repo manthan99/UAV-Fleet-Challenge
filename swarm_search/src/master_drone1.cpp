@@ -192,7 +192,7 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
         }
 
   		global_pos_pub.publish(pose1);
-      ROS_INFO("Delta to Destination : %f Height Difference Remaining %f", delta_to_destination, abs(pose1.pose.position.altitude-current_pose.altitude));
+      ROS_INFO("Delta to Destination : %f Height Difference Remaining %f ", delta_to_destination, abs(pose1.pose.position.altitude-current_pose.altitude));
       // cout << "Delta to Destination : "<< delta_to_destination << endl;
       // cout << "Height Difference Remaining : " << abs(pose1.pose.position.altitude-current_pose.altitude) << endl;
 
@@ -204,6 +204,7 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       if( ((delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5)||tolerance_time > 100) /////////////////////change this//////////
       {
         ROS_INFO("Reached at the target position");  
+        ROS_INFO("tolerance time is : %d", tolerance_time);
         return 1;
       }
       prev_delta = delta_to_destination;
