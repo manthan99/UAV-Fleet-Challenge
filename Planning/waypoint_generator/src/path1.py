@@ -8,6 +8,7 @@ from waypoint_generator.msg import point_list
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Twist
 from geopy.distance import geodesic
+from swarm_search import local_flags
 
 
 pos_list = []
@@ -15,60 +16,64 @@ pos_list = []
 global pub1
 global current_position
 current_position = Point()
-global flag
-flag = Twist()
-flag.linear.y = 0
-#flags.limnear.y
+flag = local_flags()
+flag.transition_s2s.data = False
+GPS_flag = 0
 
 
-def posCallback(data):
+def frameCallback(data):
     global pos_list
     pos_list = data.points
-    if flag.linear.y == 1:
+    if flag.transition_s2s.data == True and GPS_flag == 1:
         path()
-#	print (pos_list)
+
 
 def current_callback(data):
+    global GPS_flag
     global current_position
     current_position.x = data.latitude
     current_position.y = data.longitude
+    GPS_flag = 1
+
 
 def flag_callback(data):
-    global flag 
+    global flag
     flag = data
+
 
 def listener():
     global pub1
     rospy.init_node('path_drone1', anonymous=True)
-    pos_sub = rospy.Subscriber('/drone1/chatter', point_list, posCallback)
-    current_pos = rospy.Subscriber("/drone1/mavros/global_position/global",NavSatFix, current_callback)
-    flags = rospy.Subscriber("/drone1/flags",Twist,flag_callback)
+    frame_sub = rospy.Subscriber('/drone1/ROI_flow_initial', point_list, frameCallback)
+    current_pos = rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, current_callback)
+    flags = rospy.Subscriber("/drone1/flags", local_flags, flag_callback)
     pub1 = rospy.Publisher('/drone1/ROI_flow', point_list, queue_size=5)
     rospy.spin()
 
 
 def path():
+    print("Entered Path()")
     global pub1
     global pos_list
     current_pos = current_position
-    # pos_list = pos_list
     edge = []
 
+    print(pos_list)
     for i in range(len(pos_list)):
         for j in range(i + 1, len(pos_list)):
-            edge.append(AHP.Edge(i, j, geodesic((pos_list[i].x, pos_list[i].y), (pos_list[j].x,pos_list[j].y)).m ))
+            edge.append(AHP.Edge(i, j, geodesic((pos_list[i].x, pos_list[i].y), (pos_list[j].x, pos_list[j].y)).m))
 
     for e in edge:
         pass
         # print(e.u, "<->", e.v, ", W:", e.w)
 
     path, w = AHP.AHP(edge, len(pos_list))
-    # print("Final result", path, "TW:", w)
 
     order_waypt = GOW.generateOrderedWaypoints(pos_list, current_pos, path)
-    pub1.publish(order_waypt)
-    # print(order_waypt)
 
+    while not rospy.is_shutdown():
+        pub1.publish(order_waypt)
+        sleep(1)
 
 if __name__ == '__main__':
     listener()

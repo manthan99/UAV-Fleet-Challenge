@@ -42,11 +42,11 @@ std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
 
 // heading angle received
 double heading_angle = 0.0;
-void orientCallback(const std_msgs::Float64::ConstPtr& msg)
-{
-	heading_angle = msg->data * M_PI/180.0;
-	// cout<<"Heading received: "<<heading_angle<<endl;
-}
+// void orientCallback(const std_msgs::Float64::ConstPtr& msg)
+// {
+// 	heading_angle = msg->data * M_PI/180.0;
+// 	// cout<<"Heading received: "<<heading_angle<<endl;
+// }
 
 // height callback
 void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
@@ -67,6 +67,8 @@ void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_po
 {
 	double lat = frame_points->points[0].x;
 	double lon = frame_points->points[0].y;
+	heading_angle = frame_points->points[0].z;
+	
 	geodetic_converter::GeodeticConverter conv;
 	conv.initialiseReference(lat,lon,0);
 	// cout<<"length_per_pixel: "<<length_per_pixel<<endl;

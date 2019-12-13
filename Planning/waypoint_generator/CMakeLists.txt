@@ -201,5 +201,5 @@ include_directories(
 # catkin_add_nosetests(test)
 
 
-add_executable(ROI_publisher src/ROI_publisher.cpp)
-target_link_libraries(ROI_publisher  ${catkin_LIBRARIES})
+add_executable(ROI_publisher1 src/ROI_publisher1.cpp)
+target_link_libraries(ROI_publisher1  ${catkin_LIBRARIES})
