@@ -50,13 +50,13 @@ def main():
     start_time = rospy.get_time()
 
     rospy.Subscriber('/drone1/convert_global_to_local', Pose2D, global_to_local)
-
     pub1 = rospy.Publisher('/drone1/global_to_local_converted', Pose2D, queue_size=10)
-    local_target.x = E.meters
-    local_target.y = N.meters
-    pub1.publish(local_target)
-
+    r = rospy.Rate(10.0)
     while not rospy.is_shutdown():
+	    local_target.x = E.meters # DOUBT IN COORDINATE SYSTEM
+	    local_target.y = N.meters
+	    pub1.publish(local_target)
+	    r.sleep()
         rospy.spin()
 
 if __name__ == '__main__':

@@ -476,8 +476,10 @@ def main():
     rospy.Subscriber("/drone1/mavros/state", State, state1)
     rospy.Subscriber("/drone2/mavros/state", State, state2)
     rospy.Subscriber("/drone3/mavros/state", State, state3)
+    r = rospy.Rate(10.0)
 
     while not rospy.is_shutdown():
+	    r.sleep()
         rospy.spin()
 
 if __name__ == '__main__':
