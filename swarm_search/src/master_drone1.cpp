@@ -56,6 +56,7 @@ int time_tolerance_to_destination = 100000;
 
 sensor_msgs::NavSatFix current_pose; //current drone pose
 geographic_msgs::GeoPoseStamped pose; //target pose - updated in function setDestination
+geometry_msgs::PoseStamped local_current_pose;
 // geometry_msgs::Twist drone_status;
 
 swarm_search::point_list arr;
@@ -91,22 +92,29 @@ void pose_cb(const sensor_msgs::NavSatFix::ConstPtr& msg)
   {
     initial_takeoff_height = current_pose.altitude;
     first += 1;
-}
-
+  }
   // ROS_INFO("Latitude %f Longitude: %f Altitude: %f", current_pose.latitude, current_pose.longitude, current_pose.altitude);
 }
 
-// void setDestination(float x, float y, float z)
-void setDestination(const geographic_msgs::GeoPoseStamped::ConstPtr& msg2)
+void local_pose_cb(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
-  pose = *msg2;
-  double X,Y,Z;
-
-  X = pose.pose.position.latitude;
-  Y = pose.pose.position.longitude;
-  Z = pose.pose.position.altitude;
-  ROS_INFO("Destination set to Latitude: %f longitudetude: %f Altitude %f", X, Y, Z);
+  local_current_pose = *msg;
+  ROS_INFO("LOCAL x: %f y: %f z: %f", local_current_pose.pose.position.x, local_current_pose.pose.position.y, local_current_pose.pose.position.z);
+  // ROS_INFO("y: %f", current_pose.pose.position.y);
+  // ROS_INFO("z: %f", current_pose.pose.position.z);
 }
+
+// void setDestination(float x, float y, float z)
+// void setDestination(const geographic_msgs::GeoPoseStamped::ConstPtr& msg2)
+// {
+//   pose = *msg2;
+//   double X,Y,Z;
+
+//   X = pose.pose.position.latitude;
+//   Y = pose.pose.position.longitude;
+//   Z = pose.pose.position.altitude;
+//   ROS_INFO("Destination set to Latitude: %f longitudetude: %f Altitude %f", X, Y, Z);
+// }
 
 void callback_sip(const swarm_search::sip_goal::ConstPtr& msg)
 {
@@ -136,6 +144,62 @@ double haversine(double lat1, double lon1, double lat2, double lon2)
     double c = 2 * asin(sqrt(a)); 
     return rad * c; 
 } 
+
+int velocity_recovery(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
+{
+  ros::Rate rate(10.0);
+  ROS_INFO(" VELOCITY RECOVERY MODE CALLED ! ");
+  ros::Publisher pub2 = n.advertise<mavros_msgs::PositionTarget>("/mavros/setpoint_raw/local",50); 
+  ros::Subscriber currentPos1 = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+  int recovery_timeout = 500;
+  int recovery_tolerance_time = 0;
+  
+
+  /* pose1.lat \ log  and current_pose.lat \ long bhej ke ... local frame me mangwayo */
+
+  target.x = 
+  target.y =
+
+
+  while(ros::ok() && delta_to_destination > goal_tolerance && recovery_tolerance_time < recovery_timeout)
+  {
+
+    delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
+    recovery_tolerance_time ++;
+
+    curr.x = local_current_pose.pose.position.x;
+    curr.y = local_current_pose.pose.position.y;
+
+    dir_vec_mag = sqrt((curr.x-target.x)*(curr.x-target.x) + (curr.y-target.y)*(curr.y-target.y)); // altitute ke liye : (curr.z-target.z)*(curr.z-target.z))
+    dir_vec.x = (target.x - curr.x)/dir_vec_mag;
+    dir_vec.y = (target.y - curr.y)/dir_vec_mag;
+
+
+    vel_msg.coordinate_frame=mavros_msgs::PositionTarget::FRAME_BODY_NED;
+    vel_msg.header.frame_id="target_position";   
+
+    vel_msg.type_mask = mavros_msgs::PositionTarget::IGNORE_PX |
+                        mavros_msgs::PositionTarget::IGNORE_PY |
+                        mavros_msgs::PositionTarget::IGNORE_PZ |
+                        mavros_msgs::PositionTarget::IGNORE_AFX |
+                        mavros_msgs::PositionTarget::IGNORE_AFY |
+                        mavros_msgs::PositionTarget::IGNORE_AFZ |
+                        mavros_msgs::PositionTarget::FORCE |
+                        mavros_msgs::PositionTarget::IGNORE_YAW |
+                        mavros_msgs::PositionTarget::IGNORE_YAW_RATE ;
+    vel_msg.header.stamp=ros::Time::now();
+
+    vel_msg.velocity.x= dir_vec.x*vel_factor;//v.linear.x;  // *** DIRECTION KA DOUBT HAI -ve try karke dekho
+    vel_msg.velocity.y= dir_vec.y*vel_factor;//v.linear.y;
+    vel_msg.velocity.z= 0;
+
+    pub2.publish(vel_msg);
+
+      
+    ros::spinOnce();
+  }
+
+}
 
 int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
 {
@@ -181,8 +245,13 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
         ROS_INFO("tolerance time is : %d", tolerance_time);
       }
 
+      if((tolerance_time > 100) && (tolerance_time < 300) (delta_to_destination > goal_tolerance))
+      {
+        velocity_recovery(nh,pose1);
+      }
 
-      if( ((delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) ||tolerance_time > 200) /////////////////////change this//////////
+
+      if( ((delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) || tolerance_time > 300) /////////////////////change this//////////
       {
         ROS_INFO("Reached at the target position");  
         ROS_INFO("tolerance time is : %d", tolerance_time);
@@ -536,4 +605,3 @@ int main(int argc, char** argv)
   scan_main(nh);
  }
 }
-
