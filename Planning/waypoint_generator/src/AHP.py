@@ -1,5 +1,4 @@
 from heapq import heappush, heappop, heapify
-import math
 
 
 def findSet(parent, u):
@@ -43,10 +42,9 @@ def AHP(edge, n):
     restore = []
     vis = [False] * n
     w = 0
-    print(str(n) + "n ki value")
+
     i = 0
-    while i < math.floor(n / 2):
-        print(str(i) + "first")
+    while i < n / 2:
         e = heappop(edge)
         if findSet(parent, e.u) != findSet(parent, e.v) and not vis[e.u] and not vis[e.v]:
             vis[e.u] = vis[e.v] = True
@@ -64,8 +62,7 @@ def AHP(edge, n):
     vis = [False] * n
 
     i = 0
-    while i < math.floor((n - 1) / 2):
-        print(str(i) + "sec")
+    while i < (n - 1) / 2:
         e = heappop(edge)
         if findSet(parent, e.u) != findSet(parent, e.v) and not vis[e.u] and not vis[e.v]:
             vis[e.u] = vis[e.v] = True

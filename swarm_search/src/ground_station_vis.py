@@ -15,13 +15,11 @@ from sensor_msgs.msg import NavSatFix
 
 
 R1 = 6373000
-sip_const = 2.5  # depends on the height and FOV of the camera
-
-input_square = [[22.314583, 87.308080], [22.314583, 87.308276], [22.314765, 87.308278], [22.314764, 87.308082]]
+sip_const = 12.5
+input_square = [[22.3148840, 87.3082802], [22.3148340, 87.3080619], [22.3146551, 87.3080740], [22.3146762, 87.3082779]]
 global drone_input
 global drone_start
-drone_input = [[22.314577, 87.308265], [22.314579, 87.308355], [22.314577, 87.308243], [22.314577, 87.308205]]
-
+drone_input = [[22.3146762, 87.3082779], [22.3146782, 87.3082744], [22.3146692, 87.3082734], [22.3146758, 87.3082533]]
 drone_start = drone_input[0]
 
 global connected0
@@ -182,11 +180,11 @@ def quadrant_SIP(sq_c):
     Input list containing 4 corners of a sub quadrant
     Returns a list containg the 4 SIPs of that sub quadrant
     Sub-quadrant corners in format - 1X2
-                                                                                                                                     XXX
-                                                                                                                                     0X3
+                                                                     XXX
+                                                                     0X3
     SIP format - X2X
-                                                     1X3
-                                                     X0X
+                             1X3
+                             X0X
     """
     sip = []
     for i in range(4):
@@ -250,10 +248,6 @@ def plot1(in_array, in_SIP, drone_pos):
     """
     x1 = []
     y1 = []
-    x2 = []
-    y2 = []
-
-    plt.scatter(drone_start[0], drone_start[1], color=(0.0, 0.0, 0.0))
 
     for i in range(0, 4):
         for j in range(0, 4):
@@ -261,16 +255,6 @@ def plot1(in_array, in_SIP, drone_pos):
             y1.append(in_array[i][j][1])
 
     plt.scatter(x1, y1, color=(0.0, 1.0, 0.0))
-
-    for i in range(0, 4):
-        x2.append(input_square[i][0])
-
-    for i in range(0, 4):
-        y2.append(input_square[i][1])
-
-    plt.scatter(x2, y2, color=(1.0, 0.0, 0.0))
-    plt.scatter(drone_start[0], drone_start[1], color=(0.0, 0.0, 0.0))
-
     j = 4
     for i in range(0, len(in_SIP)):
         plt.scatter(in_SIP[i][0][0], in_SIP[i][0][1], color=(i / 4.0, 0.0, j / 4.0))
@@ -317,23 +301,19 @@ def find_start_end_SIP(quad_sip, drone_pos):
         sip_dist.append(gps_dist(drone_pos[0], drone_pos[1], quad_sip[i][0], quad_sip[i][1]))
 
     sorted_dist_m = copy.deepcopy(sip_dist)
-    # Use these if need to calculate original SIP
-    # while sorted_dist_m:
-    # 	minimum = sorted_dist_m[0]
-    # 	j = 0
-    # 	for i in range(0, len(sorted_dist_m)):
-    # 		if sorted_dist_m[i] < minimum:
-    # 			minimum = sorted_dist_m[i]
 
-    # 	j = sip_dist.index(minimum)
-    # 	new_list.append(quad_sip[j])
-    # 	sorted_dist_m.remove(minimum)
+    while sorted_dist_m:
+        minimum = sorted_dist_m[0]
+        j = 0
+        for i in range(0, len(sorted_dist_m)):
+            if sorted_dist_m[i] < minimum:
+                minimum = sorted_dist_m[i]
 
-    # return([new_list[0], new_list[3]])
+        j = sip_dist.index(minimum)
+        new_list.append(quad_sip[j])
+        sorted_dist_m.remove(minimum)
 
-    # Use this for fixed SIP in orientation
-
-    return([quad_sip[0], quad_sip[2]])
+    return([new_list[0], new_list[3]])
 
 
 def assign_sip(gps_sip, drone_input):
@@ -404,6 +384,40 @@ def execute():
         start_time = rospy.get_time()
         i = 1
 
+    # target_0 = sip_goal()
+    # target_1 = sip_goal()
+    # target_2 = sip_goal()
+    # target_3 = sip_goal()
+
+    # target_0.takeoff_flag.data = 0
+    # target_1.takeoff_flag.data = 0
+    # target_2.takeoff_flag.data = 0
+    # target_3.takeoff_flag.data = 0
+
+    # gps_sip = compute_gps_sip(input_square,drone_start)
+    gps_sip = compute_gps_sip(input_square, drone_start)
+    target_sip = assign_sip1(gps_sip, drone_input)
+
+    # target_0.sip_start.x = target_sip[0][0][0]
+    # target_0.sip_start.y = target_sip[0][0][1]
+    # target_0.sip_end.x = target_sip[0][1][0]
+    # target_0.sip_end.y = target_sip[0][1][1]
+
+    # target_1.sip_start.x = target_sip[1][0][0]
+    # target_1.sip_start.y = target_sip[1][0][1]
+    # target_1.sip_end.x = target_sip[1][1][0]
+    # target_1.sip_end.y = target_sip[1][1][1]
+
+    # target_2.sip_start.x = target_sip[2][0][0]
+    # target_2.sip_start.y = target_sip[2][0][1]
+    # target_2.sip_end.x = target_sip[2][1][0]
+    # target_2.sip_end.y = target_sip[2][1][1]
+
+    # target_3.sip_start.x = target_sip[3][0][0]
+    # target_3.sip_start.y = target_sip[3][0][1]
+    # target_3.sip_end.x = target_sip[3][1][0]
+    # target_3.sip_end.y = target_sip[3][1][1]
+
     # target_2.takeoff_flag.data = 1 ####### only for testing
     if((rospy.get_time() - start_time) > 5):
         target_1.takeoff_flag.data = 1
@@ -436,7 +450,7 @@ def calculate_execute():
     target_3.takeoff_flag.data = 0
 
     gps_sip = compute_gps_sip(input_square, drone_start)
-    target_sip = assign_sip1(gps_sip, drone_input)
+    target_sip = assign_sip(gps_sip, drone_input)
 
     target_0.sip_start.x = target_sip[0][0][0]
     target_0.sip_start.y = target_sip[0][0][1]
@@ -533,9 +547,6 @@ def main():
     rospy.Subscriber("/drone1/mavros/state", State, state1)
     rospy.Subscriber("/drone2/mavros/state", State, state2)
     rospy.Subscriber("/drone3/mavros/state", State, state3)
-
-    # calculate_execute()
-    # execute()
 
     while not rospy.is_shutdown():
         rospy.spin()

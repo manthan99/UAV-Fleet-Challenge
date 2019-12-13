@@ -14,24 +14,14 @@ from mavros_msgs.msg import GlobalPositionTarget
 from sensor_msgs.msg import NavSatFix
 
 
-# R1 = 6373000
-# sip_const = 12.5
-# input_square = [[-35.362600, 149.163974], [-35.362600, 149.165078], [-35.363492, 149.165078], [-35.363492, 149.163974]]
-# global drone_input
-# global drone_start
-# drone_start = drone_input[0]
-# drone_input = [[-35.362383, 149.164811], [-35.362424, 149.164817], [-35.362459, 149.164819], [-35.362498, 149.164825]]
 R1 = 6373000
-sip_const = 2.5  # depends on the height and FOV of the camera
-
-input_square = [[22.314583, 87.308080], [22.314583, 87.308276], [22.314765, 87.308278], [22.314764, 87.308082]]
+sip_const = 12.5
+input_square = [[22.3148840, 87.3082802], [22.3148340, 87.3080619], [22.3146551, 87.3080740], [22.3146762, 87.3082779]]
 global drone_input
 global drone_start
-drone_input = [[22.314577, 87.308265], [22.314579, 87.308355], [22.314577, 87.308243], [22.314577, 87.308205]]
-
-
+drone_input = [[22.3146762, 87.3082779], [22.3146782, 87.3082744], [22.3146692, 87.3082734], [22.3146758, 87.3082533]]
 drone_start = drone_input[0]
-#drone_input = [[0,0], [0,0], [0,0], [0,0]]
+
 
 global connected0
 global armed0
@@ -75,7 +65,7 @@ connected2 = 1
 connected3 = 1
 
 armed0 = 1
-armed1 = 1
+armed1 = 0
 armed2 = 1
 armed3 = 1
 ###############################
@@ -290,23 +280,19 @@ def find_start_end_SIP(quad_sip, drone_pos):
         sip_dist.append(gps_dist(drone_pos[0], drone_pos[1], quad_sip[i][0], quad_sip[i][1]))
 
     sorted_dist_m = copy.deepcopy(sip_dist)
-    # Use these if need to calculate original SIP
-    # while sorted_dist_m:
-    # 	minimum = sorted_dist_m[0]
-    # 	j = 0
-    # 	for i in range(0, len(sorted_dist_m)):
-    # 		if sorted_dist_m[i] < minimum:
-    # 			minimum = sorted_dist_m[i]
 
-    # 	j = sip_dist.index(minimum)
-    # 	new_list.append(quad_sip[j])
-    # 	sorted_dist_m.remove(minimum)
+    while sorted_dist_m:
+        minimum = sorted_dist_m[0]
+        j = 0
+        for i in range(0, len(sorted_dist_m)):
+            if sorted_dist_m[i] < minimum:
+                minimum = sorted_dist_m[i]
 
-    # return([new_list[0], new_list[3]])
+        j = sip_dist.index(minimum)
+        new_list.append(quad_sip[j])
+        sorted_dist_m.remove(minimum)
 
-    # Use this for fixed SIP in orientation
-
-    return([quad_sip[0], quad_sip[2]])
+    return([new_list[0], new_list[3]])
 
 
 def assign_sip(gps_sip, drone_input):
@@ -365,14 +351,13 @@ def execute():
         start_time = rospy.get_time()
         i = 1
 
-    # target_2.takeoff_flag.data = 1 ####### only for testing
-    if((rospy.get_time() - start_time) > 1):
+    if((rospy.get_time() - start_time) > 5):
         target_1.takeoff_flag.data = 1
 
-    if((rospy.get_time() - start_time) > 2):
+    if((rospy.get_time() - start_time) > 10):
         target_2.takeoff_flag.data = 1
 
-    if((rospy.get_time() - start_time) > 2):
+    if((rospy.get_time() - start_time) > 15):
         target_3.takeoff_flag.data = 1
 
     if((rospy.get_time() - start_time) > 20):
@@ -404,15 +389,10 @@ def calculate_execute():
     target_0.sip_end.x = target_sip[0][1][0]
     target_0.sip_end.y = target_sip[0][1][1]
 
-    # target_1.sip_start.x = target_sip[1][0][0]
-    # target_1.sip_start.y = target_sip[1][0][1]
-    # target_1.sip_end.x = target_sip[1][1][0]
-    # target_1.sip_end.y = target_sip[1][1][1]
-
-    target_1.sip_start.x = 22.3199716
-    target_1.sip_start.y = 87.3013464
-    target_1.sip_end.x = 22.3200810
-    target_1.sip_end.y = 87.3013353
+    target_1.sip_start.x = target_sip[1][0][0]
+    target_1.sip_start.y = target_sip[1][0][1]
+    target_1.sip_end.x = target_sip[1][1][0]
+    target_1.sip_end.y = target_sip[1][1][1]
 
     target_2.sip_start.x = target_sip[2][0][0]
     target_2.sip_start.y = target_sip[2][0][1]
@@ -439,17 +419,14 @@ def state1(data):
     global j
 
     connected1 = data.connected
-    #armed1 = data.armed
+    armed1 = data.armed
 
     if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j < 10)):
-        # if(connected1 and armed1 and j < 10):
-        print("execute: %d" % (j))
+        print(j)
         calculate_execute()
         j += 1
 
     if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j >= 10)):
-        # if(connected1 and armed1 and j >= 10):
-        print("starting to execute")
         execute()
 
 
@@ -464,7 +441,6 @@ def state2(data):
 def state3(data):
     global connected3
     global armed3
-    global start_mission
 
     connected3 = data.connected
     armed3 = data.armed
@@ -501,9 +477,11 @@ def main():
     rospy.Subscriber("/drone1/mavros/state", State, state1)
     rospy.Subscriber("/drone2/mavros/state", State, state2)
     rospy.Subscriber("/drone3/mavros/state", State, state3)
+    r = rospy.Rate(10.0)
 
     while not rospy.is_shutdown():
-        rospy.spin()
+	    r.sleep()
+	    rospy.spin()
 
 if __name__ == '__main__':
     main()
