@@ -56,7 +56,8 @@ int time_tolerance_to_destination = 100000;
 
 sensor_msgs::NavSatFix current_pose; //current drone pose
 geographic_msgs::GeoPoseStamped pose; //target pose - updated in function setDestination
-geometry_msgs::PoseStamped local_current_pose;
+geometry_msgs::Pose2D local_target;
+geometry_msgs::Pose2D g2l;
 // geometry_msgs::Twist drone_status;
 
 swarm_search::point_list arr;
@@ -96,10 +97,10 @@ void pose_cb(const sensor_msgs::NavSatFix::ConstPtr& msg)
   // ROS_INFO("Latitude %f Longitude: %f Altitude: %f", current_pose.latitude, current_pose.longitude, current_pose.altitude);
 }
 
-void local_pose_cb(const geometry_msgs::PoseStamped::ConstPtr& msg)
+void local_targetpose_cb(const geometry_msgs::Pose2D::ConstPtr& msg)
 {
   local_current_pose = *msg;
-  ROS_INFO("LOCAL x: %f y: %f z: %f", local_current_pose.pose.position.x, local_current_pose.pose.position.y, local_current_pose.pose.position.z);
+  ROS_INFO("LOCAL x: %f y: %f ", local_target.pose.position.x, local_target.pose.position.y);
   // ROS_INFO("y: %f", current_pose.pose.position.y);
   // ROS_INFO("z: %f", current_pose.pose.position.z);
 }
@@ -151,15 +152,23 @@ int velocity_recovery(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
   ROS_INFO(" VELOCITY RECOVERY MODE CALLED ! ");
   ros::Publisher pub2 = n.advertise<mavros_msgs::PositionTarget>("/mavros/setpoint_raw/local",50); 
   ros::Subscriber currentPos1 = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+  ros::Subscriber local_target_pub = nh.subscribe<geometry_msgs::Pose2D>("/drone1/global_to_local_converted",10, local_targetpose_cb);
+
   int recovery_timeout = 500;
   int recovery_tolerance_time = 0;
+  float vel_factor = 3;
+  double dir_vec_mag = 0;
+  double dir_vec_x = 0;
+  double dir_vec_y = 0;
+  double dir_vec_x = 0;
   
 
   /* pose1.lat \ log  and current_pose.lat \ long bhej ke ... local frame me mangwayo */
-
-  target.x = 
-  target.y =
-
+  // IDHAR SUSCRIBER DAALO global_local se values leke target me daaldega 
+  double target_x = local_target.pose.position.x;
+  double target_y = local_target.pose.position.y;
+  double curr_x = 0;
+  double curr_y = 0;
 
   while(ros::ok() && delta_to_destination > goal_tolerance && recovery_tolerance_time < recovery_timeout)
   {
@@ -167,8 +176,8 @@ int velocity_recovery(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
     delta_to_destination = haversine(pose1.pose.position.latitude,pose1.pose.position.longitude,current_pose.latitude,current_pose.longitude);
     recovery_tolerance_time ++;
 
-    curr.x = local_current_pose.pose.position.x;
-    curr.y = local_current_pose.pose.position.y;
+    curr_x = local_current_pose.pose.position.x;
+    curr_y = local_current_pose.pose.position.y;
 
     dir_vec_mag = sqrt((curr.x-target.x)*(curr.x-target.x) + (curr.y-target.y)*(curr.y-target.y)); // altitute ke liye : (curr.z-target.z)*(curr.z-target.z))
     dir_vec.x = (target.x - curr.x)/dir_vec_mag;
@@ -206,11 +215,12 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
   // the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(10.0);
 
-  cout << pose1 << endl;
+  cout << pose1 << endl;  
 
-  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global_to_local", 10);
+  ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global_to_local", 10); // change topic
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
-
+  ros::Publisher cvt_g2l = nh.advertise<geometry_msgs::Pose2D>("/drone1/convert_global_to_local", 10); // change topic
+ 
   //DRONE DIAG FLAGS TO BE ADDED 
 
   // allow the subscribers to initialize
@@ -223,6 +233,11 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
 
   pose1.header.stamp = ros::Time::now();
   global_pos_pub.publish(pose1);
+
+  g2l.x = pose1.pose.position.latitude;
+  g2l.y = pose1.pose.position.longitude;
+
+  cvt_g2l.publish(g2l);
 
   int tolerance_time = 0;
 
@@ -249,9 +264,7 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
       {
         velocity_recovery(nh,pose1);
       }
-
-
-      if( ((delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) || tolerance_time > 300) /////////////////////change this//////////
+      else if( ((delta_to_destination < goal_tolerance) && abs(pose1.pose.position.altitude-current_pose.altitude)<0.5) || tolerance_time > 300) /////////////////////change this//////////
       {
         ROS_INFO("Reached at the target position");  
         ROS_INFO("tolerance time is : %d", tolerance_time);
