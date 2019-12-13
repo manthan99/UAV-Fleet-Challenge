@@ -3,12 +3,7 @@ import cv2
 import numpy as np
 import math
 
-K1 = 4
 split = 7
-K2 = 5
-
-font = cv2.FONT_HERSHEY_COMPLEX
-maxc = 5
 def f1(img):
 
     bm = 0
@@ -48,15 +43,13 @@ def get_cnt(img):
     img = (img.all(2)!=0).astype(np.uint8)*255
 
     cnt2=[]
-    _, contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     #cnt3.extend(contours)
     for cnt in contours:
         # Contours detection
         area = cv2.contourArea(cnt)
 
         approx = cv2.approxPolyDP(cnt, 0.05*cv2.arcLength(cnt, True), True) # 0.012 param
-        x = approx.ravel()[0]
-        y = approx.ravel()[1]
 
         if area > 40 and area<1000:#param
 
