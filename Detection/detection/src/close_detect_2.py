@@ -116,40 +116,40 @@ def cntsearch(frameorg, state):
     # # DID resize
     # image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
     
-    threshold= cv2.inRange(cv2.cvtColor(image, cv2.COLOR_BGR2HSV), (25, 0, 0), (100, 255, 255));
+    threshold= cv2.inRange(cv2.cvtColor(image, cv2.COLOR_BGR2HSV), (25, 0, 0), (100, 255, 255));  # broad threshold on hue
     cv2.imshow("inRange", threshold)
 
     cv2.imshow("frame",image)
     blur = (cv2.GaussianBlur(image, (5,5), 0))
     
     #grayg = image[:, :, 1]
-    # blurs = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
-    blurs = blur[:, :, 1]
-    cv2.imshow("blurgreen", blurs)
-    cv2.imshow
+    #blurs = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+    # blurs = blur[:, :, 1]
+    # cv2.imshow("blurgreen", blurs)
+    # cv2.imshow
     # blur = grayg
     
     # blurred = blur[:, :, 1]
     #blurred = blur
     # blurred = cv2.equalizeHist(blurred)
     # cv2.imshow("blurgray", blurs)
-    ret,thresh = cv2.threshold(blurs,150,255,0)
-    thresh = cv2.erode(thresh, None, iterations=6)
-    thresh = cv2.dilate(thresh, None, iterations=6)
-    cv2.imshow("thresherodedilate", thresh)
-    cv2.imshow("thresh", thresh)
+    # ret,thresh = cv2.threshold(blurs,150,255,0)
+    # thresh = cv2.erode(thresh, None, iterations=6)
+    # thresh = cv2.dilate(thresh, None, iterations=6)
+    # cv2.imshow("thresherodedilate", thresh)
+    # cv2.imshow("thresh", thresh)
 
     imgx = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     imgy = cv2.cvtColor(imgx, cv2.COLOR_BGR2GRAY)
 
-    ret, threshhsv = cv2.threshold(imgy,100,255,0)
+    ret, threshhsv = cv2.threshold(imgy,100,255,0)            #######param for threshold, hsv ko rgb treat krke gray mein convert kra
     cv2.imshow("invthresh", threshhsv)
     
     thresh = np.uint8(threshold*(threshold/255.0))
     threshhsv = np.uint8(threshold*(threshhsv/255.0))
 
-    invcontours, invhierarchy = cv2.findContours((threshhsv),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    _, invcontours, invhierarchy = cv2.findContours((threshhsv),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    # contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     # cnts = cv2.findContours(gray.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # contours = imutils.grab_contours(contours)
     cnts = []
@@ -182,7 +182,7 @@ def cntsearch(frameorg, state):
     #   cnts.append(cnt)
 
     for cnt in invcontours:
-        k = cv2.isContourConvex(cnt)
+        # k = cv2.isContourConvex(cnt)
         # if not k:
         #   continue
         area = cv2.contourArea(cnt)
@@ -192,7 +192,7 @@ def cntsearch(frameorg, state):
         print("area: "+str(area))
 
 
-        epsilon = 0.05*cv2.arcLength(cnt,True)
+        epsilon = 0.05*cv2.arcLength(cnt,True)     # param might not be changed
         approx = cv2.approxPolyDP(cnt,epsilon,True)
         if len(approx) != 4:
             print("not box")
