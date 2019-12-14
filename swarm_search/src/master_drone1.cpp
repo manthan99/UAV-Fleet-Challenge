@@ -80,7 +80,6 @@ flags.wait.data // drone busy
 */
 
 
-
 void state_cb(const mavros_msgs::State::ConstPtr& msg)
 {
   current_state = *msg;
@@ -179,10 +178,12 @@ double haversine(double lat1, double lon1, double lat2, double lon2)
 } 
 
 ros::Rate rate(10.0);
-// ros::Publisher pub2 = nh.advertise<mavros_msgs::PositionTarget>("/drone1/mavros/setpoint_raw/local",50); 
-// ros::Subscriber currentPos1 = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
-// ros::Subscriber local_currentPos1 = nh.subscribe<geometry_msgs::PoseStamped>("/drone1/mavros/local_position/pose", 10, local_pose_cb);
-// ros::Subscriber local_target_pub = nh.subscribe<geometry_msgs::Pose2D>("/drone1/global_to_local_converted",10, local_targetpose_cb);
+ros::NodeHandle nh;
+ros::Publisher pub2 = nh.advertise<mavros_msgs::PositionTarget>("/drone1/mavros/setpoint_raw/local",50); 
+ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+ros::Subscriber local_currentPos1 = nh.subscribe<geometry_msgs::PoseStamped>("/drone1/mavros/local_position/pose", 10, local_pose_cb);
+ros::Subscriber local_target_pub = nh.subscribe<geometry_msgs::Pose2D>("/drone1/global_to_local_converted",10, local_targetpose_cb);
+
 // VELOCITY RECOVERY ********************
 int velocity_recovery(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
 {
@@ -550,7 +551,6 @@ void scan_main(ros::NodeHandle nh)
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "drone1_master_node");
-  ros::NodeHandle nh;
 
   // the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(20.0);
@@ -558,13 +558,13 @@ int main(int argc, char** argv)
   // mavros topics
   ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/drone1/mavros/state", 10, state_cb);
   ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global_to_local", 10);
-  ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
   ros::Subscriber localPos = nh.subscribe<geometry_msgs::PoseStamped>("/drone1/mavros/local_position/pose", 10, orientation_cb);
 
-  ros::Publisher pub2 = nh.advertise<mavros_msgs::PositionTarget>("/drone1/mavros/setpoint_raw/local",50); 
+  currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
+  pub2 = nh.advertise<mavros_msgs::PositionTarget>("/drone1/mavros/setpoint_raw/local",50); 
   // ros::Subscriber currentPos1 = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
-  ros::Subscriber local_currentPos1 = nh.subscribe<geometry_msgs::PoseStamped>("/drone1/mavros/local_position/pose", 10, local_pose_cb);
-  ros::Subscriber local_target_pub = nh.subscribe<geometry_msgs::Pose2D>("/drone1/global_to_local_converted",10, local_targetpose_cb);
+  local_currentPos1 = nh.subscribe<geometry_msgs::PoseStamped>("/drone1/mavros/local_position/pose", 10, local_pose_cb);
+  local_target_pub = nh.subscribe<geometry_msgs::Pose2D>("/drone1/global_to_local_converted",10, local_targetpose_cb);
 
 
   // master and ROI topics

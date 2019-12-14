@@ -9,7 +9,7 @@ global local_target
 local_target = Pose2D()
 
 def global_to_local(data):
-    # TODO: refactor
+	# TODO: refactor
 
 	lat = data.x
 	lon = data.y
@@ -45,19 +45,19 @@ def global_to_local(data):
 
 def main():
 
-    global pub1
+	global pub1
 
-    rospy.init_node('global_to_local_drone1', anonymous=True)
-    start_time = rospy.get_time()
+	rospy.init_node('global_to_local_drone1', anonymous=True)
+	start_time = rospy.get_time()
 
-    rospy.Subscriber('/drone1/convert_global_to_local', Pose2D, global_to_local)
-    pub1 = rospy.Publisher('/drone1/global_to_local_converted', Pose2D, queue_size=10)
-    r = rospy.Rate(10.0)
-    while not rospy.is_shutdown():
-    	pub1.publish(local_target)
-    	r.sleep()
-    	rospy.spin()
+	rospy.Subscriber('/drone1/convert_global_to_local', Pose2D, global_to_local)
+	pub1 = rospy.Publisher('/drone1/global_to_local_converted', Pose2D, queue_size=10)
+	r = rospy.Rate(10.0)
+	while not rospy.is_shutdown():
+		pub1.publish(local_target)
+		r.sleep()
+		rospy.spin()
 
 if __name__ == '__main__':
-    main()
+	main()
 
