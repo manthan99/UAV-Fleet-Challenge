@@ -75,6 +75,7 @@ def point_publisher():
 
     rate = rospy.Rate(60)
     msg = point_list()
+    point_global = Point()
 
     while not rospy.is_shutdown():
         
@@ -90,7 +91,7 @@ def point_publisher():
             contourlist, state = roi_detect.cntsearch(frameorg, state)
         else:
             contourlist, state = close_detect.cntsearch(frameorg, state)
-        point_global = Point()
+
         point_global.x = current_pose.latitude
         point_global.y = current_pose.longitude
         point_global.z = heading
