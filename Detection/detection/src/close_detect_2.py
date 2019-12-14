@@ -6,11 +6,11 @@
 import cv2 
 import numpy as np 
 
-import numpy as np
 import argparse
 import close_detect_help
-
-import cv2
+from imutils import contours
+from skimage import measure
+import imutils
 font = cv2.FONT_HERSHEY_COMPLEX
 
 
