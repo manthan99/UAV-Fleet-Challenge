@@ -61,7 +61,7 @@ def point_publisher():
     global state, current_flag
 
     # CHANGE VIDEO FOR CAMERA Stream
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture("/home/debjoy/A_projects/interiit/architwalacode/2019_1212_144638_002_EVE.MOV")
 
     if (cap.isOpened() == False):
         print("Unable to read feed")
@@ -75,23 +75,20 @@ def point_publisher():
 
     rate = rospy.Rate(60)
     msg = point_list()
-    point_global = Point()
 
     while not rospy.is_shutdown():
-        
+        _, frameorg = cap.read()
+
         if current_flag == 0:
             rate.sleep()
             continue
-            
-        _, frameorg = cap.read()
-        
         contourlist = []
         cv2.imshow("init", frameorg)
         if current_flag == 1:
             contourlist, state = roi_detect.cntsearch(frameorg, state)
         else:
             contourlist, state = close_detect.cntsearch(frameorg, state)
-
+        point_global = Point()
         point_global.x = current_pose.latitude
         point_global.y = current_pose.longitude
         point_global.z = heading

@@ -164,7 +164,7 @@ def cntsearch(frameorg, state):
                 list_currentkalman.append(((x, P), dc, mc+1, cnt))
         if dc>5:
             contourlist.append(cv2.boundingRect(cnt))
-            cv2.circle(frameorg, (int(x[0][0]), int(x[1][0])), int(radius),
+            cv2.circle(frameorg, (int(x[0][0]), int(x[1][0])), int(10),
                 (255, 0, 0), 3)
     list_prevkalman = list_currentkalman[:]    
     return contourlist, list_prevkalman

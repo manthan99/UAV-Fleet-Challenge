@@ -103,6 +103,9 @@ def adjust_gamma(image, gamma=1.0):
     # apply gamma correction using the lookup table
     return cv2.LUT(image, table)
 
+def dist(pt1, pt2):
+    return np.sqrt((pt1[0]-pt2[0])**2+(pt1[1]-pt2[1])**2)
+
 def cntsearch(frameorg, state):
     list_prevkalman = state
     list_currentkalman = []
@@ -110,8 +113,8 @@ def cntsearch(frameorg, state):
     frame = frameorg
     image = frame[:1000, :, :]
     image = adjust_gamma(image, 1)
-    # DID resize
-    image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
+    # # DID resize
+    # image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
     
     threshold= cv2.inRange(cv2.cvtColor(image, cv2.COLOR_BGR2HSV), (25, 0, 0), (100, 255, 255));
     cv2.imshow("inRange", threshold)
@@ -276,7 +279,8 @@ def cntsearch(frameorg, state):
                 list_currentkalman.append(((x, P), dc, mc+1, cnt))
         if dc>5:
             fcontours.append(cv2.boundingRect(cnt))
-            cv2.circle(image, (int(x[0][0]), int(x[1][0])), int(radius),
+            cv2.circle(image, (int(x[0][0]), int(x[1][0])), int(10),
                 (0, 255, 0), 3)
+    cv2.imshow("image", image)
     list_prevkalman = list_currentkalman[:]
     return fcontours, list_prevkalman
