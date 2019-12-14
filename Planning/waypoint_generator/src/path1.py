@@ -8,8 +8,8 @@ from waypoint_generator.msg import point_list
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Twist
 from geopy.distance import geodesic
-from swarm_search import local_flags
-
+from swarm_search.msg import local_flags
+from time import sleep
 
 pos_list = []
 

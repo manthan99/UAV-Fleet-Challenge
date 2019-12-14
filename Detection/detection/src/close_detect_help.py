@@ -29,7 +29,7 @@ def get_cnt(img):
     img = (img.all(2)!=0).astype(np.uint8)*255
 
     cnt2=[]
-    _, contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     #cnt3.extend(contours)
     for cnt in contours:
         # Contours detection

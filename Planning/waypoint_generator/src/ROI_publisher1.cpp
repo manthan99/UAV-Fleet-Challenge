@@ -20,8 +20,8 @@ using namespace ros;
 bool waypoint_reached = true;
 double height = 0;
 double FOV = 2*M_PI/3;  			// define in radians 
-double resolution_y = 1080;		// image cols
-double resolution_x = 1920;		// image rows
+double resolution_y = 480;		// image cols
+double resolution_x = 640;		// image rows
 
 bool GPS_received, heading_received, height_received, frameToGPS;
 

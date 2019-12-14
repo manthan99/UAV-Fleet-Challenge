@@ -97,7 +97,8 @@ void pose_cb(const sensor_msgs::NavSatFix::ConstPtr& msg)
   }
   else if( counter_1 == 15)
   {
-    initial_takeoff_height = initial_takeoff_height/15;
+	initial_takeoff_height = initial_takeoff_height/15;
+	counter_1+=1;
   }
 
   // ROS_INFO("Latitude %f Longitude: %f Altitude: %f", current_pose.latitude, current_pose.longitude, current_pose.altitude);
@@ -123,6 +124,8 @@ void orientation_cb(const geometry_msgs::PoseStamped::ConstPtr& msg)
     current_orientation.x = average_orientation.x/30;
     current_orientation.y = average_orientation.y/30;
     current_orientation.z = average_orientation.z/30;
+	counter_2+=1;
+	
   }
 }
 

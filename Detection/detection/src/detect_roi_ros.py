@@ -25,7 +25,7 @@ font = cv2.FONT_HERSHEY_COMPLEX
 import roi_detect
 import close_detect
 
-current_flag = 1
+current_flag = 0
 state = []
 
 current_pose = NavSatFix()
@@ -67,26 +67,29 @@ def point_publisher():
         print("Unable to read feed")
     rospy.init_node('detect_ros', anonymous=True)
 
-    pub = rospy.Publisher('/drone1/probable_target_locations', point_list)
-    pubc = rospy.Publisher('/drone1/close_coordinates', point_list)
-    rospy.Subscriber("/drone1/flag", local_flags, callback)
+    pub = rospy.Publisher('/drone1/probable_target_locations', point_list, queue_size=10)
+    pubc = rospy.Publisher('/drone1/close_coordinates', point_list, queue_size=10)
+    rospy.Subscriber("/drone1/flags", local_flags, callback)
     rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, global_position)
     rospy.Subscriber("/drone1/mavros/global_position/compass_hdg", Float64, heading_feed)
 
     rate = rospy.Rate(60)
     msg = point_list()
-
+    ind = 0
     while not rospy.is_shutdown():
         _, frameorg = cap.read()
-
+#        print(frameorg.shape)
         if current_flag == 0:
             rate.sleep()
             continue
         contourlist = []
-        cv2.imshow("init", frameorg)
+        ind+=1
+        #cv2.imshow("init", frameorg)
         if current_flag == 1:
+            print("now detecting for ROI")
             contourlist, state = roi_detect.cntsearch(frameorg, state)
         else:
+            print("doing the close detect")
             contourlist, state = close_detect.cntsearch(frameorg, state)
         point_global = Point()
         point_global.x = current_pose.latitude
@@ -109,6 +112,8 @@ def point_publisher():
             pub.publish(msg)
         else:
             pubc.publish(msg)
+        if ind%20:
+            cv2.imshow("f", frameorg)
         msg = point_list()
         rate.sleep()
 

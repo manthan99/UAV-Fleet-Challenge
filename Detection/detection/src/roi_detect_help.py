@@ -35,7 +35,7 @@ def splitimg(img):
             sel = np.ix_(np.arange(i1 * (img.shape[0] // split), (i1 + 1) * (img.shape[0] // split)).tolist(),
                          np.arange(i2 * (img.shape[1] // split), (i2 + 1) * (img.shape[1] // split)).tolist(), [0, 1, 2])
             resimg[(sel)] = f1(img[(sel)])
-    cv2.imshow('t3', resimg)
+    #cv2.imshow('t3', resimg)
     return resimg
 
 
