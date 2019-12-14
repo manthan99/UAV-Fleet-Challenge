@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 import math
 
-split = 1
-
 font = cv2.FONT_HERSHEY_COMPLEX
 def f1(img):
 
@@ -14,7 +12,7 @@ def f1(img):
     sz = frame_HSV.shape[0]*frame_HSV.shape[1]
     z2 = np.sum(frame_HSV, axis=(0,1))/(sz-bm)
     z3 = (frame_HSV - z2).astype(np.float)/np.array([255.0, 255.0, 255.0])
-    z3 = (abs(z3) > 0.25).any(axis=2).astype(np.uint8)
+    z3 = (abs(z3) > 0.25).any(axis=2).astype(np.uint8)         ################colour difference from background
     z3 = cv2.erode(z3, None)
 
     z3 = cv2.dilate(z3, None, iterations=5)
@@ -23,8 +21,6 @@ def f1(img):
     z3 = np.repeat(z3[:, :, np.newaxis], 3, 2).astype(np.uint8)
     frame_HSV = z3*frame_HSV
     img = z3*cv2.cvtColor(frame_HSV.astype(np.uint8), cv2.COLOR_Lab2BGR)
-
-
     return img
 
 def get_cnt(img):    
@@ -39,7 +35,7 @@ def get_cnt(img):
         # Contours detection
         area = cv2.contourArea(cnt)
 
-        approx = cv2.approxPolyDP(cnt, 0.08*cv2.arcLength(cnt, True), True) # 0.012 param
+        approx = cv2.approxPolyDP(cnt, 0.08*cv2.arcLength(cnt, True), True) # 0.012 param      #########
         x = approx.ravel()[0]
         y = approx.ravel()[1]
 

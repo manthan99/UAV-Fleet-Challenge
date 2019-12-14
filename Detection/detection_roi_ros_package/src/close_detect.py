@@ -86,11 +86,11 @@ def cntsearch(frameorg, state):
         x,y = i.ravel()
         ctc[int(y)][int(x)]=1
 
-    t = (close_detect_help.get_cnt(frame))
+    t2 = close_detect_help.get_cnt(frame)         #######IoU
 
     frame = cv2.GaussianBlur(frame, (11,11), 0)
     contourlist = []
-    for cnt in t:
+    for cnt in t2:
         rects_temp = cv2.boundingRect(cnt)
 
         rects = np.array([[rects_temp[0], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]+rects_temp[3]], [rects_temp[0], rects_temp[1]+rects_temp[3]]])

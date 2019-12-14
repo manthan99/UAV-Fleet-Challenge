@@ -86,11 +86,11 @@ def cntsearch(frameorg, state):
         x,y = i.ravel()
         ctc[int(y)][int(x)]=1
 
-    t = (roi_detect_help.get_cnt(frame))
+    t2 = roi_detect_help.get_cnt(frame)
 
     frame = cv2.GaussianBlur(frame, (11,11), 0)
     contourlist = []
-    for cnt in t:
+    for cnt in t2:
         rects_temp = cv2.boundingRect(cnt)
 
         rects = np.array([[rects_temp[0], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]+rects_temp[3]], [rects_temp[0], rects_temp[1]+rects_temp[3]]])
@@ -116,14 +116,14 @@ def cntsearch(frameorg, state):
         fcl = np.sum(ctc[(sel)])
         acl = np.sum(frameorg[selc], axis=(0,1)).astype(np.float)/rectl_temp[2]/rectl_temp[3]
         
-        d = fcs*rectl_temp[2]*rectl_temp[3]/fcl/rects_temp[2]/rects_temp[3]
+        d = fcs*rectl_temp[2]*rectl_temp[3]/fcl/rects_temp[2]/rects_temp[3]       # feature count
         t = (acs-acl)/255.0
         
-        t = t*t
+        t = t*t          # LAB SPace        https://sensing.konicaminolta.us/blog/identifying-color-differences-using-l-a-b-or-l-c-h-coordinates/
         # #print(np.sum(t))
         # cv2.putText(frameorg, "a"+str(((int(np.sum(t)*100)/100.0))), (cnt[0][0][0],cnt[0][0][1]), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
 
-        if (d < 1 or fcl == 0) and np.sum(t) > 0.04:
+        if (d < 1 or fcl == 0) and np.sum(t) > 0.04:        
             # print(vs)
             contourlist.append(cnt)
             cv2.drawContours(frameorg, [rectl, rects],-1, (0,255,0),1)
@@ -145,7 +145,7 @@ def cntsearch(frameorg, state):
             lcv = P[:2, :2]
             t = np.array([cX-x[0][0], cY - x[1][0]]).reshape((1,2))
             lpp = np.matmul(np.matmul(t, lcv), t.T)
-            if lpp < 5000:
+            if lpp < 5000:             ###########threshold for match       shouln'd be changed
                 matched = True
                 list_matched.append((x,P))
                 list_currentkalman.append((kalman_xy(x, P, cl, R), dc+1, 0, cnt))
@@ -162,9 +162,9 @@ def cntsearch(frameorg, state):
                 br = True
                 break
         if not br:
-            if mc<10:
+            if mc<10:               ###############see this,     this is to remove the rong kalman 
                 list_currentkalman.append(((x, P), dc, mc+1, cnt))
-        if dc>5:
+        if dc>5:                    ###############  to finalise the kalman that it is correct
             contourlist.append(cv2.boundingRect(cnt))
             cv2.circle(frameorg, (int(x[0][0]), int(x[1][0])), int(radius),
                 (255, 0, 0), 3)

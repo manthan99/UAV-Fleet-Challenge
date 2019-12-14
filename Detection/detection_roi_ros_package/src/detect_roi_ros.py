@@ -46,8 +46,8 @@ def point_publisher():
 		print("Unable to read feed")
 	rospy.init_node('detect_ros', anonymous=True)
 
-	pub = rospy.Publisher('roi_coordinates', point_list)
-	pubc = rospy.Publisher('close_coordinates', point_list)
+	pub = rospy.Publisher('/drone0/roi_coordinates', point_list)
+	pubc = rospy.Publisher('/drone0/close_coordinates', point_list)
 	rospy.Subscriber("/drone0/flag", local_flags, callback)
 
 	rate = rospy.Rate(60)
@@ -82,5 +82,8 @@ def point_publisher():
 			pubc.publish(msg)
 		msg =point_list()
 		rate.sleep()
-
+		
+// first coordinate is the gps coordinate {x,y,z}   {lat,long,heading_angle}
 point_publisher()
+
+ 
