@@ -77,11 +77,13 @@ def point_publisher():
     msg = point_list()
 
     while not rospy.is_shutdown():
-        _, frameorg = cap.read()
-
+        
         if current_flag == 0:
             rate.sleep()
             continue
+            
+        _, frameorg = cap.read()
+        
         contourlist = []
         cv2.imshow("init", frameorg)
         if current_flag == 1:
