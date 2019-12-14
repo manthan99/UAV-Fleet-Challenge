@@ -10,6 +10,7 @@ from geometry_msgs.msg import Twist
 from geopy.distance import geodesic
 from swarm_search.msg import local_flags
 from time import sleep
+from std_msgs.msg import Float64MultiArray
 
 pos_list = []
 
@@ -47,7 +48,7 @@ def listener():
     frame_sub = rospy.Subscriber('/drone1/ROI_flow_initial', point_list, frameCallback)
     current_pos = rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, current_callback)
     flags = rospy.Subscriber("/drone1/flags", local_flags, flag_callback)
-    pub1 = rospy.Publisher('/drone1/ROI_flow', point_list, queue_size=5)
+    pub1 = rospy.Publisher('/listener', Float64MultiArray, queue_size=10)
     rospy.spin()
 
 
@@ -72,7 +73,7 @@ def path():
     order_waypt = GOW.generateOrderedWaypoints(pos_list, current_pos, path)
 
     while not rospy.is_shutdown():
-        pub1.publish(order_waypt)
+        pub1.publish(Float64MultiArray(data=order_waypt))
         sleep(1)
 
 if __name__ == '__main__':
