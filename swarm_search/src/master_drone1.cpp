@@ -33,7 +33,7 @@ mavros_msgs::State current_state;
 
 double takeoff_alt = 1.5;
 double search_altitude = 2.0;
-double scan_altitude = 10.0;
+double scan_altitude = 5;
 double goal_tolerance = 0.002;
 
 int cnt =0;
@@ -164,8 +164,6 @@ int navigate(ros::NodeHandle nh, geographic_msgs::GeoPoseStamped pose1)
   ros::Publisher global_pos_pub = nh.advertise<geographic_msgs::GeoPoseStamped>("/drone1/mavros/setpoint_position/global_to_local", 10);
   ros::Subscriber currentPos = nh.subscribe<sensor_msgs::NavSatFix>("/drone1/mavros/global_position/global", 10, pose_cb);
 
-  //DRONE DIAG FLAGS TO BE ADDED 
-
   // allow the subscribers to initialize
   ROS_INFO("INITIALISING...");
   for(int i=0; i<100; i++)
@@ -286,6 +284,12 @@ int search_main(ros::NodeHandle nh)
 {
   ros::Publisher flags_pub = nh.advertise<swarm_search::local_flags>("/drone1/flags", 10);
   int k = 0;
+  flags.search_flag.data = 1;
+  for (int j= 0; j < 5; ++j)
+  {
+    flags_pub.publish(flags);
+    sleep(0.1);
+  }
 
   for(int i=0;arr.points[i].x!=0;i++)
   {
@@ -296,31 +300,15 @@ int search_main(ros::NodeHandle nh)
     pose.pose.position.altitude = initial_takeoff_height + search_altitude;
     pose.pose.orientation = current_orientation;
     k = navigate(nh,pose);
-
-    flags.search_flag.data = 1;
-    for (int j= 0; j < 5; ++j)
-    {
-      flags_pub.publish(flags);
-      sleep(0.1);
-    }
-
     sleep(5);
-
-    flags.search_flag.data = 0; 
-    for (int j= 0; j < 5; ++j)
-    {
-      flags_pub.publish(flags);
-      sleep(0.1);
-    }
-  
-    // int detected_points = 0;
-    // if(detected_points >=4)
-    // {
-    //   return 1;
-    // }
   }
 
-  //exit ke baad flag change hona chahiye code me
+  flags.search_flag.data = 0; 
+  for (int j= 0; j < 5; ++j)
+  {
+    flags_pub.publish(flags);
+    sleep(0.1);
+  }
 
   ROS_INFO("Main search is now over");
   return 0;
@@ -361,16 +349,16 @@ void scan_main(ros::NodeHandle nh)
     } 
     //scanning should start here
 
-   	sleep(5);
+  sleep(5);
 
-		pose.header.stamp = ros::Time::now();
-    pose.header.frame_id = "target_position";
-		pose.pose.position.latitude = master_goal.sip_end.x;
-		pose.pose.position.longitude = master_goal.sip_end.y;
-		pose.pose.position.altitude = initial_takeoff_height + scan_altitude;
-    pose.pose.orientation = current_orientation;
+	pose.header.stamp = ros::Time::now();
+  pose.header.frame_id = "target_position";
+	pose.pose.position.latitude = master_goal.sip_end.x;
+	pose.pose.position.longitude = master_goal.sip_end.y;
+	pose.pose.position.altitude = initial_takeoff_height + scan_altitude;
+  pose.pose.orientation = current_orientation;
 
-   	int y = navigate(nh, pose);
+  int y = navigate(nh, pose);
 
  		if(y == 1)
  		{
@@ -421,12 +409,12 @@ void scan_main(ros::NodeHandle nh)
         }
 
     	  }
-    	else
-    	{
-    		ROS_INFO(" Poor ROI Confidence - Requesting Recovery Mode 1 ");
-    		flags.recovery1_flag.data = 1;//recovery1_flag = 1;
-    		flags_pub.publish(flags);
-    	}
+    		else
+    		{
+    			ROS_INFO(" Poor ROI Confidence - Requesting Recovery Mode 1 ");
+    			flags.recovery1_flag.data = 1;//recovery1_flag = 1;
+    			flags_pub.publish(flags);
+    		}
  		}
  		else
  		{
@@ -516,7 +504,6 @@ int main(int argc, char** argv)
       ROS_INFO("Waiting for the permission to take off");
       ros::spinOnce();
       ros::Duration(0.01).sleep();
-      //wait for permission to take off
     }
   
   ros::ServiceClient takeoff_cl = nh.serviceClient<mavros_msgs::CommandTOL>("/drone1/mavros/cmd/takeoff");

@@ -4,13 +4,89 @@ rosrun master_sync_fkie master_sync
 rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1
 
 # First visualise the SIP's
-python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_vis.py
+UAV_Fleet_Challenge/swarm_search/src/ground_station_vis.py
 # To navigate to SIP
-python /home/shrey/catkin_ws/src/UAV_Fleet_Challenge/swarm_search/src/ground_station_ros.py
+UAV_Fleet_Challenge/swarm_search/src/ground_station_ros.py
 
 Sanity checks:
 1. Once ./drone*.sh launched in odroid check if data comes properly in master. Error may be because of ACM 0/99. Check ls /dev/ttyACM
-2. 
+
+Codes to be run on odroid-0:
+
+UAV_Fleet_Challenge -> ./drone0.sh
+rosrun swarm_search master_drone0
+rosrun waypoint_generator ROI_publisher0
+python ardupilot_ws/src/UAV_Fleet_Challenge/Detection/detection/src/detect_roi_ros0.py
+python ardupilot_ws/src/UAV_Fleet_Challenge/Planning/waypoint_generator/src/path0.py
+rosrun waypoint_generator final_point0
+
+Codes to be run on odroid-1:
+
+UAV_Fleet_Challenge -> ./drone1.sh
+rosrun swarm_search master_drone1
+rosrun waypoint_generator ROI_publisher1
+python ardupilot_ws/src/UAV_Fleet_Challenge/Detection/detection/src/detect_roi_ros1.py
+python ardupilot_ws/src/UAV_Fleet_Challenge/Planning/waypoint_generator/src/path1.py
+rosrun waypoint_generator final_point1
+
+Codes to be run on odroid-2:
+
+UAV_Fleet_Challenge -> ./drone2.sh
+rosrun swarm_search master_drone2
+rosrun waypoint_generator ROI_publisher2
+python ardupilot_ws/src/UAV_Fleet_Challenge/Detection/detection/src/detect_roi_ros2.py
+python ardupilot_ws/src/UAV_Fleet_Challenge/Planning/waypoint_generator/src/path2.py
+rosrun waypoint_generator final_point2
+
+Codes to be run on odroid-3:
+
+UAV_Fleet_Challenge -> ./drone3.sh
+rosrun swarm_search master_drone3
+rosrun waypoint_generator ROI_publisher3
+python ardupilot_ws/src/UAV_Fleet_Challenge/Detection/detection/src/detect_roi_ros3.py
+python ardupilot_ws/src/UAV_Fleet_Challenge/Planning/waypoint_generator/src/path3.py
+rosrun waypoint_generator final_point3
+
+contents of /etc/hosts :
+
+192.168.0.10	odroid0
+192.168.0.11	odroid1
+192.168.0.12	odroid2
+192.168.0.13	odroid3
+192.168.0.20	tracer
+192.168.0.21	shrey-HP-Pavilion-Notebook
+192.168.0.22	carry-Alienware-15-R3
+192.168.0.23	manthan-Alienware-15-R3
+192.168.0.24	ayush-omen
+192.168.0.25	dell18
+
+######## Ad-Hoc #######
+192.168.19.10	odroid0
+192.168.19.11	odroid1
+192.168.19.12	odroid2
+192.168.19.13	odroid3
+192.168.19.20	tracer
+192.168.19.21	shrey-HP-Pavilion-Notebook
+192.168.19.22	carry-Alienware-15-R3
+192.168.19.23	manthan-Alienware-15-R3
+192.168.19.24	ayush-omen
+192.168.19.25	dell18
+
+
+Alias
+
+alias drone0='ssh -X odroid@192.168.0.10'
+alias drone1='ssh -X odroid@192.168.0.11'
+alias drone2='ssh -X odroid@192.168.0.12'
+alias drone3='ssh -X odroid@192.168.0.13'
+
+Alias Adhoc
+
+alias drone0='ssh -X odroid@192.168.19.10'
+alias drone1='ssh -X odroid@192.168.19.11'
+alias drone2='ssh -X odroid@192.168.19.12'
+alias drone3='ssh -X odroid@192.168.19.13'
+
 
 Changes:  
 1. pluma ardupilot_ws/src/UAV_Fleet_Challenge/swarm_search/src/master_drone1.cpp --- Added guided things
@@ -19,6 +95,15 @@ Changes:
 4. etc/hosts should have static ip of masters
 
 
-ground_station_ros:
-state1 - uptill publishing target SIP for all the drones
-state2 - 
+"Adhokh für all"
+
+Enable:
+1. Sudo cp interfaces.mesh interfaces ( in /etc/network)
+2. modify /etc/hosts
+3. Reboot
+
+Disable:
+1. Sudo cp interfaces.orig interfaces
+(In /etc/network)
+2. Modify /etc/hosts
+3.Reboot
