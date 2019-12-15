@@ -137,14 +137,14 @@ void statusCallback(const swarm_search::local_flags::ConstPtr& flag_val)
 int main(int argc, char **argv)
 {
 	
-	ros::init(argc, argv, "ROI_publisher1");
+	ros::init(argc, argv, "ROI_publisher0");
 	ros::NodeHandle n;
 	
-	ros::Subscriber frame_point_sub = n.subscribe("/drone1/probable_target_locations", 1000, framePointCallback);
-	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
+	ros::Subscriber frame_point_sub = n.subscribe("/drone0/probable_target_locations", 1000, framePointCallback);
+	ros::Subscriber current_position = n.subscribe("/drone0/mavros/local_position/pose",10, localposcallback);
 	
-  	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
-  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone1/ROI_flow_initial", 1000);
+  	ros::Subscriber status_sub = n.subscribe("/drone0/flags", 1000, statusCallback);
+  	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone0/ROI_flow_initial", 1000);
   	
 
 

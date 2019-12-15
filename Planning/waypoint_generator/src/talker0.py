@@ -50,13 +50,13 @@ def gps_callback(data):
 
 
 def talker():
-    # pub = rospy.Publisher('/drone1/some_topic', point_list, queue_size=10)
-    # gps = rospy.Publisher('/drone1/mavros/global_position/global', NavSatFix, queue_size=10)
-    # height = rospy.Publisher('/drone1/mavros/local_position/pose',  PoseStamped, queue_size=10)
-    # compass_hdg = rospy.Publisher('/drone1/mavros/global_position/compass_hdg', Float64, queue_size=10)
+    # pub = rospy.Publisher('/drone0/some_topic', point_list, queue_size=10)
+    # gps = rospy.Publisher('/drone0/mavros/global_position/global', NavSatFix, queue_size=10)
+    # height = rospy.Publisher('/drone0/mavros/local_position/pose',  PoseStamped, queue_size=10)
+    # compass_hdg = rospy.Publisher('/drone0/mavros/global_position/compass_hdg', Float64, queue_size=10)
     # pub0 = rospy.Publisher('/drone0/chatter', point_list, queue_size=10)
-    pub1 = rospy.Publisher('/drone1/probable_target_locations', point_list, queue_size=10)
-    gps_pos = rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, gps_callback)
+    pub1 = rospy.Publisher('/drone0/probable_target_locations', point_list, queue_size=10)
+    gps_pos = rospy.Subscriber("/drone0/mavros/global_position/global", NavSatFix, gps_callback)
     # pub2 = rospy.Publisher('/drone2/chatter', point_list, queue_size=10)
     # pub3 = rospy.Publisher('/drone3/chatter', point_list, queue_size=10)
     rospy.init_node('talker', anonymous=True)
