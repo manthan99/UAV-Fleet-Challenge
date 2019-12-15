@@ -76,12 +76,15 @@ def point_publisher():
     rate = rospy.Rate(60)
     msg = point_list()
     ind = 0
+    point_global = Point()
     while not rospy.is_shutdown():
-        _, frameorg = cap.read()
 #        print(frameorg.shape)
         if current_flag == 0:
             rate.sleep()
             continue
+        ret, frameorg = cap.read()
+        if not ret:
+            print("chudd gyi aur laude lg gye")
         contourlist = []
         ind+=1
         #cv2.imshow("init", frameorg)
@@ -91,7 +94,6 @@ def point_publisher():
         else:
             print("doing the close detect")
             contourlist, state = close_detect.cntsearch(frameorg, state)
-        point_global = Point()
         point_global.x = current_pose.latitude
         point_global.y = current_pose.longitude
         point_global.z = heading
@@ -99,7 +101,7 @@ def point_publisher():
         msg.points.append(point_global)
         for cnts in contourlist:
             [x, y, w, h] = cnts
-            cv2.rectangle(frameorg, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(frameorg, (x, y), (x + w, y + h), (0, 255, 0), 10)
 
             point1 = Point()
             point1.x = x + w / 2.0
@@ -112,8 +114,11 @@ def point_publisher():
             pub.publish(msg)
         else:
             pubc.publish(msg)
-        if ind%20:
-            cv2.imshow("f", frameorg)
+        #if ind%20==0:
+#            cv2.imshow("f", frameorg)
+        cv2.imwrite("ardupilot_ws/src/UAV_Fleet_Challenge/Detection/detection/src/output"+str(ind)+".jpg", frameorg)
+
+        #cv2.imshow("f", frameorg)
         msg = point_list()
         rate.sleep()
 

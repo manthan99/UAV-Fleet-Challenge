@@ -10,20 +10,24 @@ def f1(img):
 
     bm = 0
     frame_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    frame_HSVr = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)[:, :, 0]
     frame_HSV = (cv2.GaussianBlur(frame_HSV, (11, 11), 0)).astype(np.int)
     sz = frame_HSV.shape[0] * frame_HSV.shape[1]
     z2 = np.sum(frame_HSV, axis=(0, 1)) / (sz - bm)
     z3 = (frame_HSV - z2).astype(np.float) / np.array([255.0, 255.0, 255.0])
-    z3 = (abs(z3) > 0.2).any(axis=2).astype(np.uint8)
-    z3 = cv2.erode(z3, None)
+    z3 = (abs(z3) > 0.17).any(axis=2).astype(np.uint8)
+    #z3 = cv2.erode(z3, None)
 
     z3 = cv2.dilate(z3, None, iterations=5)
 
     bm = bm + sz - np.sum(z3)
     z3 = np.repeat(z3[:, :, np.newaxis], 3, 2).astype(np.uint8)
     frame_HSV = z3 * frame_HSV
-    img = z3 * cv2.cvtColor(frame_HSV.astype(np.uint8), cv2.COLOR_Lab2BGR)
+    z4 = (frame_HSVr > 40)*(frame_HSVr < 100)*1
+    z4 = np.repeat(z4[:, :, np.newaxis], 3, 2).astype(np.uint8)
 
+    img = z3 * z4 * img
+    
     return img
 
 
@@ -43,7 +47,7 @@ def get_cnt(img):
 
     img = splitimg(img)
     img = (img.all(2) != 0).astype(np.uint8) * 255
-
+    #cv2.imshow("isee", img)
     cnt2 = []
     contours, _ = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -55,7 +59,7 @@ def get_cnt(img):
 
         approx = cv2.approxPolyDP(cnt, 0.05 * cv2.arcLength(cnt, True), True)  # 0.012 param
 
-        if area > 40 and area < 1000:  # param
+        if area > 10 and area < 1000:  # param
 
             if len(approx) == 4:
 

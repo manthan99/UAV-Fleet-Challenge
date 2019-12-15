@@ -33,7 +33,7 @@ mavros_msgs::State current_state;
 
 double takeoff_alt = 1.5;
 double search_altitude = 2.0;
-double scan_altitude = 5.0;
+double scan_altitude = 10.0;
 double goal_tolerance = 0.002;
 
 int cnt =0;
@@ -510,9 +510,9 @@ int main(int argc, char** argv)
    
     while( master_goal.takeoff_flag.data != true  && ros::ok() && current_state.mode == "GUIDED")
     {
-      cout <<"**********GUIDED*************" <<master_goal.takeoff_flag.data << endl;
+      cout <<"**********GUIDED*************" <<int(master_goal.takeoff_flag.data) << endl;
       armed = arm_drone(nh);
-      cout << master_goal.takeoff_flag.data << endl;
+      cout << int(master_goal.takeoff_flag.data) << endl;
       ROS_INFO("Waiting for the permission to take off");
       ros::spinOnce();
       ros::Duration(0.01).sleep();

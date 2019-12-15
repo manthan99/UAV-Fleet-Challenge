@@ -127,19 +127,19 @@ def cntsearch(frameorg, state):
 
         t = t * t          # LAB SPace        https://sensing.konicaminolta.us/blog/identifying-color-differences-using-l-a-b-or-l-c-h-coordinates/
         # #print(np.sum(t))
-        # cv2.putText(frameorg, "a"+str(((int(np.sum(t)*100)/100.0))), (cnt[0][0][0],cnt[0][0][1]), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(frameorg, "a"+str(((int(np.sum(t)*100)/100.0))), (cnt[0][0][0],cnt[0][0][1]), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
 
-        if (d < 1 or fcl == 0) and np.sum(t) > 0.04:
+        if (d < 1 or fcl == 0) and np.sum(t) > 0.01:
             # print(vs)
             contourlist.append(cnt)
-            # cv2.drawContours(frameorg, [rectl, rects],-1, (0,255,0),1)
+            cv2.drawContours(frameorg, [rectl, rects],-1, (0,255,255),10)
 
     for cnt in contourlist:
         ((cX, cY), radius) = cv2.minEnclosingCircle(cnt)
         cl = np.array([cX, cY])
         matched = False
         R = 0
-
+        
         for (x, P), dc, mc, _ in list_prevkalman:
             br = False
             for (x2, P2) in list_matched:
@@ -151,6 +151,7 @@ def cntsearch(frameorg, state):
             lcv = P[:2, :2]
             t = np.array([cX - x[0][0], cY - x[1][0]]).reshape((1, 2))
             lpp = np.matmul(np.matmul(t, lcv), t.T)
+            #print(lpp)
             if lpp < 5000:  # threshold for match       shouln'd be changed
                 matched = True
                 list_matched.append((x, P))
@@ -161,6 +162,7 @@ def cntsearch(frameorg, state):
             P = np.matrix(np.eye(4)) * 10
             list_currentkalman.append((kalman_xy(x, P, cl, R), 1, 0, cnt))
     contourlist = []
+
     for (x, P), dc, mc, cnt in list_prevkalman:
         br = False
         for (x2, P2) in list_matched:
@@ -168,12 +170,12 @@ def cntsearch(frameorg, state):
                 br = True
                 break
         if not br:
-            if mc < 10:  # see this,     this is to remove the rong kalman
+            if mc <= 3:  # see this,     this is to remove the rong kalman
                 list_currentkalman.append(((x, P), dc, mc + 1, cnt))
-        if dc > 5:  # to finalise the kalman that it is correct
+    for (x, P), dc, mc, cnt in list_currentkalman:
+        if dc >= 2 and mc<=0:  # to finalise the kalman that it is correct
             contourlist.append(cv2.boundingRect(cnt))
-            # cv2.circle(frameorg, (int(x[0][0]), int(x[1][0])), int(radius),
-            #     (255, 0, 0), 3)
+
     list_prevkalman = list_currentkalman[:]
 
     return contourlist, list_prevkalman

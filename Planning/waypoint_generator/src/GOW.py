@@ -28,31 +28,36 @@ def generateOrderedWaypoints(pos_array, curr_pos, path):
 	min_dist = 1e7
 	min_node = 0
 	end_nodes = []
-	for i in range(len(pos_array)):
-	    #distance = math.sqrt(math.pow(pos_array[i].x - curr_pos.x, 2) + math.pow(pos_array[i].y - curr_pos.y, 2))
-	    distance = geodesic((pos_array[i].x, pos_array[i].y), (curr_pos.x, curr_pos.y)).m
-	    if(len(node_array[i].neighbour) == 1):
-	        end_nodes.append(i)
-	        if(distance < min_dist):
-	            min_dist = distance
-	            min_node = i
-
-	end_nodes.remove(min_node)
-	end_node = end_nodes[0]
+	
 	order_waypt = []
 	order_waypt.append(curr_pos)
 
-	order_waypt.append(pos_array[min_node])
-	prev_node = min_node
-	next_node = node_array[prev_node].neighbour[0].name
-	while(next_node != end_node):
-		# print(prev_node)
-		order_waypt.append(pos_array[next_node])
-		node_array[next_node].neighbour.remove(node_array[prev_node])
-		prev_node = next_node
-		next_node = node_array[prev_node].neighbour[0].name
+	if len(pos_array) > 1:
+		for i in range(len(pos_array)):
+			#distance = math.sqrt(math.pow(pos_array[i].x - curr_pos.x, 2) + math.pow(pos_array[i].y - curr_pos.y, 2))
+			distance = geodesic((pos_array[i].x, pos_array[i].y), (curr_pos.x, curr_pos.y)).m
+			if(len(node_array[i].neighbour) == 1):
+				end_nodes.append(i)
+				if(distance < min_dist):
+					min_dist = distance
+					min_node = i
 
-	order_waypt.append(pos_array[end_node])
+		end_nodes.remove(min_node)
+		end_node = end_nodes[0]
+
+		order_waypt.append(pos_array[min_node])
+		prev_node = min_node
+		next_node = node_array[prev_node].neighbour[0].name
+		while(next_node != end_node):
+			# print(prev_node)
+			order_waypt.append(pos_array[next_node])
+			node_array[next_node].neighbour.remove(node_array[prev_node])
+			prev_node = next_node
+			next_node = node_array[prev_node].neighbour[0].name
+
+		order_waypt.append(pos_array[end_node])
+	elif len(pos_array) == 1:
+		order_waypt.append(pos_array[0])
 
 	final_point = Point()
 	final_point.x = 0;

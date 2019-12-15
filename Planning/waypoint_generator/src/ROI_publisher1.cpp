@@ -19,14 +19,14 @@ using namespace ros;
 // nav_msgs::Path path;
 bool waypoint_reached = true;
 double height = 0;
-double FOV = 2*M_PI/3;  			// define in radians 
+double FOV = 72.4*M_PI/180.0;  			// define in radians 
 double resolution_y = 480;		// image cols
 double resolution_x = 640;		// image rows
 
 bool GPS_received, heading_received, height_received, frameToGPS;
 
 geometry_msgs::PoseStamped current_pos;
-
+ros::Publisher waypoint_pub;
 std::map < pair<double, double>, vector<pair<double, double> > > ROI_list;
 swarm_search::local_flags flags;
 
@@ -53,11 +53,13 @@ double heading_angle = 0.0;
 void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 {
 	current_pos = *position;
-	height = current_pos.pose.position.z;
-	height = 5;
+	//height = current_pos.pose.position.z;
+	height = 10;
 	// cout<<"Height received: "<<height<<endl;
 
 }
+
+
 
 // input is list of frame points 
 // converting that to distance in m
@@ -122,7 +124,7 @@ void framePointCallback(const waypoint_generator::point_list::ConstPtr& frame_po
 	}
 }
 
-ros::Publisher waypoint_pub;
+
 
 void statusCallback(const swarm_search::local_flags::ConstPtr& flag_val)
 {
@@ -130,6 +132,7 @@ void statusCallback(const swarm_search::local_flags::ConstPtr& flag_val)
 	flags = *flag_val;
 	
 }
+
 
 int main(int argc, char **argv)
 {
@@ -140,10 +143,10 @@ int main(int argc, char **argv)
 	ros::Subscriber frame_point_sub = n.subscribe("/drone1/probable_target_locations", 1000, framePointCallback);
 	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
 	
-	// ros::Subscriber gps_sub = n.subscribe("/drone1/mavros/global_position/global", 10, globalCallback);
-  	// ros::Subscriber heading_sub = n.subscribe("/drone1/mavros/global_position/compass_hdg", 1000, orientCallback);
   	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
   	waypoint_pub = n.advertise<waypoint_generator::point_list>("/drone1/ROI_flow_initial", 1000);
+  	
+
 
     ros::Rate loop_rate(20);
     while( ros::ok )

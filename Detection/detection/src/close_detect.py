@@ -143,7 +143,7 @@ def cntsearch(frameorg, state):
             lcv = P[:2, :2]
             t = np.array([cX-x[0][0], cY - x[1][0]]).reshape((1,2))
             lpp = np.matmul(np.matmul(t, lcv), t.T)
-            if lpp < 5000:
+            if lpp < 50000:
                 matched = True
                 list_matched.append((x,P))
                 list_currentkalman.append((kalman_xy(x, P, cl, R), dc+1, 0, cnt))
@@ -153,18 +153,19 @@ def cntsearch(frameorg, state):
             P = np.matrix(np.eye(4))*10
             list_currentkalman.append((kalman_xy(x, P, cl, R), 1, 0, cnt))
     contourlist = []
+
     for (x, P), dc, mc, cnt in list_prevkalman:
-        br=False
+        br = False
         for (x2, P2) in list_matched:
-            if (x==x2).all() and (P==P2).all():
+            if (x == x2).all() and (P == P2).all():
                 br = True
                 break
         if not br:
-            if mc<10:
-                list_currentkalman.append(((x, P), dc, mc+1, cnt))
-        if dc>5:
+            if mc <= 3:  # see this,     this is to remove the rong kalman
+                list_currentkalman.append(((x, P), dc, mc + 1, cnt))
+    for (x, P), dc, mc, cnt in list_currentkalman:
+        if dc >= 2 and mc<=0:  # to finalise the kalman that it is correct
             contourlist.append(cv2.boundingRect(cnt))
-            cv2.circle(frameorg, (int(x[0][0]), int(x[1][0])), int(radius),
-                (255, 0, 0), 3)
+
     list_prevkalman = list_currentkalman[:]    
     return contourlist, list_prevkalman

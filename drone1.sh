@@ -13,6 +13,8 @@ sleep 2
 rosrun master_sync_fkie master_sync &
 sleep 1
 rosservice call /drone1/mavros/set_stream_rate 0 10 1
+rosservice call /drone1/mavros/set_stream_rate 0 10 1
+rosservice call /drone1/mavros/set_stream_rate 0 10 1
 
 #roslaunch swarm_search master1.launch &
 #sleep 1

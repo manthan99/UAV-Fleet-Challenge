@@ -8,20 +8,26 @@ def f1(img):
 
     bm = 0
     frame_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    frame_HSVr = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)[:, :, 0]
     frame_HSV = (cv2.GaussianBlur(frame_HSV, (11, 11), 0)).astype(np.int)
-    sz = frame_HSV.shape[0]*frame_HSV.shape[1]
-    z2 = np.sum(frame_HSV, axis=(0,1))/(sz-bm)
-    z3 = (frame_HSV - z2).astype(np.float)/np.array([255.0, 255.0, 255.0])
-    z3 = (abs(z3) > 0.25).any(axis=2).astype(np.uint8)         ################colour difference from background
+    sz = frame_HSV.shape[0] * frame_HSV.shape[1]
+    z2 = np.sum(frame_HSV, axis=(0, 1)) / (sz - bm)
+    z3 = (frame_HSV - z2).astype(np.float) / np.array([255.0, 255.0, 255.0])
+    z3 = (abs(z3) > 0.22).any(axis=2).astype(np.uint8)
     z3 = cv2.erode(z3, None)
 
     z3 = cv2.dilate(z3, None, iterations=5)
 
     bm = bm + sz - np.sum(z3)
     z3 = np.repeat(z3[:, :, np.newaxis], 3, 2).astype(np.uint8)
-    frame_HSV = z3*frame_HSV
-    img = z3*cv2.cvtColor(frame_HSV.astype(np.uint8), cv2.COLOR_Lab2BGR)
+    frame_HSV = z3 * frame_HSV
+    z4 = (frame_HSVr > 40)*(frame_HSVr < 100)*1
+    z4 = np.repeat(z4[:, :, np.newaxis], 3, 2).astype(np.uint8)
+
+    img = z3 * z4 * img
+    
     return img
+
 
 def get_cnt(img):    
     
