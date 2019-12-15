@@ -207,6 +207,9 @@ include_directories(
 add_executable(ROI_publisher1 src/ROI_publisher1.cpp)
 target_link_libraries(ROI_publisher1  ${catkin_LIBRARIES})
 
+add_executable(final_point1 src/final_point1.cpp)
+target_link_libraries(final_point1  ${catkin_LIBRARIES})
+
 #add_executable(ROI_publisher2 src/ROI_publisher2.cpp)
 #target_link_libraries(ROI_publisher2  ${catkin_LIBRARIES})
 
