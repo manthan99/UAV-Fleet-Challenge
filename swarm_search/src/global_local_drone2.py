@@ -14,8 +14,8 @@ def global_to_local(data):
 	lat = data.x
 	lon = data.y
 
-	position_global = rospy.wait_for_message('/drone1/mavros/global_position/global', NavSatFix, timeout=5)
-	pose = rospy.wait_for_message('/drone1/mavros/local_position/pose', PoseStamped, timeout=5)
+	position_global = rospy.wait_for_message('/drone2/mavros/global_position/global', NavSatFix, timeout=5)
+	pose = rospy.wait_for_message('/drone2/mavros/local_position/pose', PoseStamped, timeout=5)
 
 	d = math.hypot(pose.pose.position.x, pose.pose.position.y)
 
@@ -48,11 +48,11 @@ def main():
 
     global pub1
 
-    rospy.init_node('global_to_local_drone1', anonymous=True)
+    rospy.init_node('global_to_local_drone2', anonymous=True)
     start_time = rospy.get_time()
 
-    rospy.Subscriber('/drone1/convert_global_to_local', Pose2D, global_to_local)
-    pub1 = rospy.Publisher('/drone1/global_to_local_converted', Pose2D, queue_size=10)
+    rospy.Subscriber('/drone2/convert_global_to_local', Pose2D, global_to_local)
+    pub1 = rospy.Publisher('/drone2/global_to_local_converted', Pose2D, queue_size=10)
     r = rospy.Rate(10.0)
     while not rospy.is_shutdown():
 		pub1.publish(local_target)

@@ -67,11 +67,11 @@ def point_publisher():
         print("Unable to read feed")
     rospy.init_node('detect_ros', anonymous=True)
 
-    pub = rospy.Publisher('/drone1/probable_target_locations', point_list, queue_size=10)
-    pubc = rospy.Publisher('/drone1/close_coordinates', point_list, queue_size=10)
-    rospy.Subscriber("/drone1/flags", local_flags, callback)
-    rospy.Subscriber("/drone1/mavros/global_position/global", NavSatFix, global_position)
-    rospy.Subscriber("/drone1/mavros/global_position/compass_hdg", Float64, heading_feed)
+    pub = rospy.Publisher('/drone2/probable_target_locations', point_list, queue_size=10)
+    pubc = rospy.Publisher('/drone2/close_coordinates', point_list, queue_size=10)
+    rospy.Subscriber("/drone2/flags", local_flags, callback)
+    rospy.Subscriber("/drone2/mavros/global_position/global", NavSatFix, global_position)
+    rospy.Subscriber("/drone2/mavros/global_position/compass_hdg", Float64, heading_feed)
 
     rate = rospy.Rate(60)
     msg = point_list()

@@ -118,14 +118,14 @@ void closeFramePointCallback(const waypoint_generator::point_list::ConstPtr& fra
 int main(int argc, char **argv)
 {
 	
-	ros::init(argc, argv, "ROI_publisher1");
+	ros::init(argc, argv, "ROI_publisher2");
 	ros::NodeHandle n;
 	
-	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
-	ros::Subscriber closed_frame_point_sub = n.subscribe("/drone1/close_coordinates", 1000, closeFramePointCallback);
-  	ros::Subscriber status_sub = n.subscribe("/drone1/flags", 1000, statusCallback);
+	ros::Subscriber current_position = n.subscribe("/drone2/mavros/local_position/pose",10, localposcallback);
+	ros::Subscriber closed_frame_point_sub = n.subscribe("/drone2/close_coordinates", 1000, closeFramePointCallback);
+  	ros::Subscriber status_sub = n.subscribe("/drone2/flags", 1000, statusCallback);
 	
-  	close_waypoint_pub = n.advertise<geometry_msgs::Point>("/drone1/listener", 1000);
+  	close_waypoint_pub = n.advertise<geometry_msgs::Point>("/drone2/listener", 1000);
 
     ros::Rate loop_rate(20);
     while( ros::ok )
