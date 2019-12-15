@@ -200,9 +200,9 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(ROI_publisher0 src/ROI_publisher0.cpp)
-target_link_libraries(ROI_publisher0  ${catkin_LIBRARIES})
+add_executable(ROI_publisher3 src/ROI_publisher3.cpp)
+target_link_libraries(ROI_publisher3  ${catkin_LIBRARIES})
 
-add_executable(final_point0 src/final_point0.cpp)
-target_link_libraries(final_point0  ${catkin_LIBRARIES})
+add_executable(final_point3 src/final_point3.cpp)
+target_link_libraries(final_point3  ${catkin_LIBRARIES})
 

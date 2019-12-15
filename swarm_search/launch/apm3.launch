@@ -9,7 +9,7 @@
 	<arg name="log_output" default="screen" />
 	<arg name="fcu_protocol" default="v2.0" />
 	<arg name="respawn_mavros" default="false" />
-	<arg name="ns" default="/drone0"/>
+	<arg name="ns" default="/drone3"/>
 	
 	<group ns="$(arg ns)">
 	<include file="$(find mavros)/launch/node.launch">
