@@ -118,7 +118,7 @@ void closeFramePointCallback(const waypoint_generator::point_list::ConstPtr& fra
 int main(int argc, char **argv)
 {
 	
-	ros::init(argc, argv, "ROI_publisher1");
+	ros::init(argc, argv, "final_points1");
 	ros::NodeHandle n;
 	
 	ros::Subscriber current_position = n.subscribe("/drone1/mavros/local_position/pose",10, localposcallback);
