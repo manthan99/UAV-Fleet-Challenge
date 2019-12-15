@@ -61,8 +61,8 @@ target_3 = sip_goal()
 
 
 ###############################
-connected0 = 1
-connected1 = 0
+connected0 = 0
+connected1 = 1
 connected2 = 1
 connected3 = 1
 
@@ -392,20 +392,20 @@ def calculate_execute():
 	gps_sip = compute_gps_sip(input_square, drone_start)
 	target_sip = assign_sip(gps_sip, drone_input)
 
-	target_0.sip_start.x = target_sip[0][0][0]
-	target_0.sip_start.y = target_sip[0][0][1]
-	target_0.sip_end.x = target_sip[0][1][0]
-	target_0.sip_end.y = target_sip[0][1][1]
+	target_0.sip_start.x = 22.3218396
+	target_0.sip_start.y = 87.3049858
+	target_0.sip_end.x = 22.3219913
+	target_0.sip_end.y = 87.3049727
 
-	# target_1.sip_start.x = target_sip[1][0][0]
-	# target_1.sip_start.y = target_sip[1][0][1]
-	# target_1.sip_end.x = target_sip[1][1][0]
-	# target_1.sip_end.y = target_sip[1][1][1]
+	# target_0.sip_start.x = target_sip[0][0][0]
+	# target_0.sip_start.y = target_sip[0][0][1]
+	# target_0.sip_end.x = target_sip[0][1][0]
+	# target_0.sip_end.y = target_sip[0][1][1]
 
-	target_1.sip_start.x = 22.3218396
-	target_1.sip_start.y = 87.3049858
-	target_1.sip_end.x = 22.3219913
-	target_1.sip_end.y = 87.3049727
+	target_1.sip_start.x = target_sip[1][0][0]
+	target_1.sip_start.y = target_sip[1][0][1]
+	target_1.sip_end.x = target_sip[1][1][0]
+	target_1.sip_end.y = target_sip[1][1][1]
 
 	target_2.sip_start.x = target_sip[2][0][0]
 	target_2.sip_start.y = target_sip[2][0][1]
@@ -421,28 +421,28 @@ def calculate_execute():
 def state0(data):
 	global connected0
 	global armed0
+	global j
 
 	connected0 = data.connected
-	armed0 = data.armed
+	#armed0 = data.armed
 
+	if(connected0 and armed0 and j < 10):
+		print("execute: %d" % (j))
+		calculate_execute()
+		j += 1
+
+	if(connected0 and armed0 and j >= 10):
+		print("starting to execute")
+		execute()
 
 
 def state1(data):
 	global connected1
 	global armed1
-	global j
 
 	connected1 = data.connected
-	#armed1 = data.armed
+	armed1 = data.armed
 
-	if(connected1 and armed1 and j < 10):
-		print("execute: %d" % (j))
-		calculate_execute()
-		j += 1
-
-	if(connected1 and armed1 and j >= 10):
-		print("starting to execute")
-		execute()
 
 
 def state2(data):
@@ -456,6 +456,7 @@ def state2(data):
 def state3(data):
 	global connected3
 	global armed3
+	global start_mission
 
 	connected3 = data.connected
 	armed3 = data.armed
