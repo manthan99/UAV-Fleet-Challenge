@@ -333,10 +333,10 @@ void scan_main(ros::NodeHandle nh)
     //scanning should start here
 
    	sleep(2);
-
+  }
 
 	pose.header.stamp = ros::Time::now();
-    pose.header.frame_id = "target_position";
+  pose.header.frame_id = "target_position";
 	pose.pose.position.latitude = master_goal2.sip2.x;
 	pose.pose.position.longitude = master_goal2.sip2.y;
 	pose.pose.position.altitude = initial_takeoff_height + search_altitude;
@@ -359,6 +359,7 @@ void scan_main(ros::NodeHandle nh)
       } 
 
     sleep(2);
+    }
 
     pose.header.stamp = ros::Time::now();
     pose.header.frame_id = "target_position";
@@ -384,6 +385,7 @@ void scan_main(ros::NodeHandle nh)
       } 
 
     sleep(2);
+    }
 
     pose.header.stamp = ros::Time::now();
     pose.header.frame_id = "target_position";
@@ -409,6 +411,7 @@ void scan_main(ros::NodeHandle nh)
       } 
 
     sleep(2);
+    }
 
     pose.header.stamp = ros::Time::now();
     pose.header.frame_id = "target_position";
@@ -434,6 +437,8 @@ void scan_main(ros::NodeHandle nh)
       } 
 
     sleep(2);
+    }
+
     pose.header.stamp = ros::Time::now();
     pose.header.frame_id = "target_position";
     pose.pose.position.latitude = master_goal2.sip6.x;
@@ -457,8 +462,9 @@ void scan_main(ros::NodeHandle nh)
         sleep(0.1);
       } 
     sleep(2);
+    }
 
-	flags.search_flag.data = 0; 
+    flags.search_flag.data = 0; 
     for (int j= 0; j < 5; ++j)
     {
       flags_pub.publish(flags);
