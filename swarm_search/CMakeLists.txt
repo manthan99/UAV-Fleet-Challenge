@@ -57,6 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
   FILES
   sip_goal.msg
+  sip_goal2.msg
   point_list.msg
   local_flags.msg
  )
@@ -222,3 +223,6 @@ include_directories(
 
 add_executable(master_drone1 src/master_drone1.cpp)
 target_link_libraries(master_drone1 ${catkin_LIBRARIES})
+
+add_executable(master_drone_sip6 src/master_drone1_6SIP.cpp)
+target_link_libraries(master_drone_sip6 ${catkin_LIBRARIES})
