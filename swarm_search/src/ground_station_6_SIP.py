@@ -15,7 +15,7 @@ from sensor_msgs.msg import NavSatFix
 
 
 R1 = 6373000
-sip_const = 5.0 # depends on the height and FOV of the camera
+sip_const = 3.0 # depends on the height and FOV of the camera
 
 input_square = [[22.32175109,87.3048497], [22.3218015, 87.3052322], [22.3221194, 87.3051769], [22.3220840, 87.3047923]]
 global drone_input
@@ -61,10 +61,10 @@ target_3 = sip_goal2()
 
 
 ###############################
-connected0 = 0
-connected1 = 0
-connected2 = 0
-connected3 = 0
+connected0 = 1
+connected1 = 1
+connected2 = 1
+connected3 = 1
 
 armed0 = 1
 armed1 = 1
@@ -250,10 +250,10 @@ def plot(in_array, in_SIP, drone_pos):
 		plt.scatter(in_SIP[i][3][1], in_SIP[i][3][0], color=(i / 4.0, 0.0, j / 4.0))
 		plt.scatter(in_SIP[i][4][1], in_SIP[i][4][0], color=(i / 4.0, 0.0, j / 4.0))
 		plt.scatter(in_SIP[i][5][1], in_SIP[i][5][0], color=(i / 4.0, 0.0, j / 4.0))
-		
+
 		plt.scatter(drone_pos[i][1], drone_pos[i][0], color=(i / 4.0, 0.0, j / 4.0))
 		j = j - 1
-	plt.show()
+	#plt.show()
 
 
 def compute_gps_sip(input_square, drone_start):
@@ -397,6 +397,10 @@ def calculate_execute():
 	target_0.sip3.y = target_sip[0][2][1]
 	target_0.sip4.x = target_sip[0][3][0]
 	target_0.sip4.y = target_sip[0][3][1]
+	target_0.sip5.x = target_sip[0][4][0]
+	target_0.sip5.y = target_sip[0][4][1]
+	target_0.sip6.x = target_sip[0][5][0]
+	target_0.sip6.y = target_sip[0][5][1]
 
 	target_1.sip1.x = target_sip[1][0][0]
 	target_1.sip1.y = target_sip[1][0][1]
@@ -406,6 +410,10 @@ def calculate_execute():
 	target_1.sip3.y = target_sip[1][2][1]
 	target_1.sip4.x = target_sip[1][3][0]
 	target_1.sip4.y = target_sip[1][3][1]
+	target_1.sip5.x = target_sip[1][4][0]
+	target_1.sip5.y = target_sip[1][4][1]
+	target_1.sip6.x = target_sip[1][5][0]
+	target_1.sip6.y = target_sip[1][5][1]
 
 	target_2.sip1.x = target_sip[2][0][0]
 	target_2.sip1.y = target_sip[2][0][1]
@@ -415,6 +423,10 @@ def calculate_execute():
 	target_2.sip3.y = target_sip[2][2][1]
 	target_2.sip4.x = target_sip[2][3][0]
 	target_2.sip4.y = target_sip[2][3][1]
+	target_2.sip5.x = target_sip[2][4][0]
+	target_2.sip5.y = target_sip[2][4][1]
+	target_2.sip6.x = target_sip[2][5][0]
+	target_2.sip6.y = target_sip[2][5][1]
 
 	target_3.sip1.x = target_sip[3][0][0]
 	target_3.sip1.y = target_sip[3][0][1]
@@ -424,6 +436,10 @@ def calculate_execute():
 	target_3.sip3.y = target_sip[3][2][1]
 	target_3.sip4.x = target_sip[3][3][0]
 	target_3.sip4.y = target_sip[3][3][1]
+	target_3.sip5.x = target_sip[3][4][0]
+	target_3.sip5.y = target_sip[3][4][1]
+	target_3.sip6.x = target_sip[3][5][0]
+	target_3.sip6.y = target_sip[3][5][1]
 
 
 def state0(data):
@@ -442,12 +458,14 @@ def state1(data):
 	connected1 = data.connected
 	#armed1 = data.armed
 
-	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j < 10)):
+	if(connected0 and connected1 and connected2 and connected3 and (j < 10)):
+		#if(1 and (j < 10)):
 		print("execute: %d" % (j))
 		calculate_execute()
 		j += 1
 
-	if(connected0 and connected1 and connected2 and connected3 and armed0 and armed1 and armed2 and armed3 and (j >= 10)):
+	if(connected0 and connected1 and connected2 and connected3 and (j >= 10)):
+		#if(1 and (j >= 10)):
 		print("starting to execute")
 		execute()
 

@@ -8,6 +8,9 @@ UAV_Fleet_Challenge/swarm_search/src/ground_station_vis.py
 # To navigate to SIP
 UAV_Fleet_Challenge/swarm_search/src/ground_station_ros.py
 
+#
+roslaunch rosbridge_server rosbridge_websocket.launch
+
 Sanity checks:
 1. Once ./drone*.sh launched in odroid check if data comes properly in master. Error may be because of ACM 0/99. Check ls /dev/ttyACM
 

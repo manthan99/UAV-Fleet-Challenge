@@ -255,7 +255,11 @@
     });
         var listener13 = new ROSLIB.Topic({
     ros : ros,
+<<<<<<< HEAD
     name : '/master/drone0/ground_msg',
+=======
+    name : '/master/drone4/ground_msg',
+>>>>>>> b3861076dd2fceaaabdd7f915c451a31796eca1c
     messageType : 'swarm_search/sip_goal2'
   });
       listener13.subscribe(function(message) {
@@ -417,7 +421,7 @@ var drone1, drone2,drone3,drone4;
 var i=0,j=0,k=0,l=0;
     function track_drone1(map,lngg,latt){
          var image = {
-          url: './drone.png',
+          url: './red-drone.png',
           size: new google.maps.Size(23,23),
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(12, 12)
@@ -444,7 +448,7 @@ var i=0,j=0,k=0,l=0;
     }
     function track_drone2(map,lngg,latt){
          var image = {
-          url: './drone.png',
+          url: './green-drone.png',
           size: new google.maps.Size(23,23),
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(12, 12)
@@ -466,7 +470,7 @@ var i=0,j=0,k=0,l=0;
     }
     function track_drone3(map,lngg,latt){
          var image = {
-          url: './drone.png',
+          url: './blue-drone.png',
           size: new google.maps.Size(23,23),
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(12, 12)
@@ -488,7 +492,7 @@ var i=0,j=0,k=0,l=0;
     }
     function track_drone4(map,lngg,latt){
          var image = {
-          url: './drone.png',
+          url: './yellow-drone.png',
           size: new google.maps.Size(23,23),
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(12, 12)
