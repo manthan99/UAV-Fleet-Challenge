@@ -26,12 +26,12 @@
         document.getElementById("closed").style.display = "none";
         document.getElementById("connected").style.display = "inline";
       });
-      ros.on("close", function() {
+   /*   ros.on("close", function() {
         console.log("Connection closed.");
         document.getElementById("connecting").style.display = "none";
         document.getElementById("connected").style.display = "none";
         document.getElementById("closed").style.display = "inline";
-      });
+      }); */
       // Create a connection to the rosbridge WebSocket server.
       ros.connect("ws://localhost:9090");  
 
@@ -129,7 +129,7 @@
     });
         var listener4 = new ROSLIB.Topic({
     ros : ros,
-    name : '/drone4/mavros/global_position/global',
+    name : '/drone0/mavros/global_position/global',
     messageType : 'sensor_msgs/NavSatFix'
   });
       listener4.subscribe(function(message) {
@@ -191,7 +191,7 @@
     });
               var listener9 = new ROSLIB.Topic({
     ros : ros,
-    name : '/drone4/listener',
+    name : '/drone0/listener',
     messageType : 'geometry_msgs/Point'
   });
      listener9.subscribe(function(message) {
@@ -205,6 +205,68 @@
           print_para(message.y,message.x);
             xy.push(message.y,message.x);
      }           
+    });
+
+
+        var listener10 = new ROSLIB.Topic({
+    ros : ros,
+    name : '/master/drone1/ground_msg',
+    messageType : 'swarm_search/sip_goal2'
+  });
+      listener10.subscribe(function(message) {
+        console.log('Drone1 SIP recieved');
+        print_point1(map,message.sip1.y,message.sip1.x);
+        print_point1(map,message.sip2.y,message.sip2.x);
+        print_point1(map,message.sip3.y,message.sip3.x);
+        print_point1(map,message.sip4.y,message.sip4.x);
+        print_point1(map,message.sip5.y,message.sip5.x);
+        print_point1(map,message.sip6.y,message.sip6.x);
+
+    });
+       var listener11 = new ROSLIB.Topic({
+    ros : ros,
+    name : '/master/drone2/ground_msg',
+    messageType : 'swarm_search/sip_goal2'
+  });
+      listener11.subscribe(function(message) {
+        console.log('Drone2 SIP recieved');
+        print_point2(map,message.sip1.y,message.sip1.x);
+        print_point2(map,message.sip2.y,message.sip2.x);
+        print_point2(map,message.sip3.y,message.sip3.x);
+        print_point2(map,message.sip4.y,message.sip4.x);
+        print_point2(map,message.sip5.y,message.sip5.x);
+        print_point2(map,message.sip6.y,message.sip6.x);
+
+    });
+       var listener12 = new ROSLIB.Topic({
+    ros : ros,
+    name : '/master/drone3/ground_msg',
+    messageType : 'swarm_search/sip_goal2'
+  });
+      listener12.subscribe(function(message) {
+        console.log('Drone1 SIP recieved');
+        print_point3(map,message.sip1.y,message.sip1.x);
+        print_point3(map,message.sip2.y,message.sip2.x);
+        print_point3(map,message.sip3.y,message.sip3.x);
+        print_point3(map,message.sip4.y,message.sip4.x);
+        print_point3(map,message.sip5.y,message.sip5.x);
+        print_point3(map,message.sip6.y,message.sip6.x);
+
+    });
+        var listener13 = new ROSLIB.Topic({
+    ros : ros,
+    name : '/master/drone0/ground_msg',
+    messageType : 'swarm_search/sip_goal2'
+  });
+      listener13.subscribe(function(message) {
+        console.log('Drone1 SIP recieved');
+        print_point4(map,message.sip1.y,message.sip1.x);
+        print_point4(map,message.sip2.y,message.sip2.x);
+        print_point4(map,message.sip3.y,message.sip3.x);
+        print_point4(map,message.sip4.y,message.sip4.x);
+        print_point4(map,message.sip5.y,message.sip5.x);
+        print_point4(map,message.sip6.y,message.sip6.x);
+
     });
   /*    var listener5 = new ROSLIB.Topic({
     ros : ros,
@@ -246,6 +308,90 @@
         };
         var shape = {
           coords: [1, 1, 1, 20, 18, 20, 18, 1],
+          type: 'poly'
+        };
+          var marker = new google.maps.Marker({
+            position: {lat: latt, lng: lngg},
+            map: map,
+            icon: image,
+            shape: shape,
+            title: '[ '+lngg+ ', '+latt+']'
+        
+          });
+
+    }
+        function print_point1(map,lngg,latt){
+     var image = {
+          url: './red.png',
+          size: new google.maps.Size(7,7),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(4,4)
+        };
+        var shape = {
+          coords: [1, 1, 1, 6, 5, 6, 5, 1],
+          type: 'poly'
+        };
+          var marker = new google.maps.Marker({
+            position: {lat: latt, lng: lngg},
+            map: map,
+            icon: image,
+            shape: shape,
+            title: '[ '+lngg+ ', '+latt+']'
+        
+          });
+
+    }
+          function print_point2(map,lngg,latt){
+     var image = {
+          url: './green.png',
+          size: new google.maps.Size(7,7),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(4,4)
+        };
+        var shape = {
+          coords: [1, 1, 1, 6, 5, 6, 5, 1],
+          type: 'poly'
+        };
+          var marker = new google.maps.Marker({
+            position: {lat: latt, lng: lngg},
+            map: map,
+            icon: image,
+            shape: shape,
+            title: '[ '+lngg+ ', '+latt+']'
+        
+          });
+
+    }
+            function print_point3(map,lngg,latt){
+     var image = {
+          url: './blue.png',
+          size: new google.maps.Size(7,7),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(4,4)
+        };
+        var shape = {
+          coords: [1, 1, 1, 6, 5, 6, 5, 1],
+          type: 'poly'
+        };
+          var marker = new google.maps.Marker({
+            position: {lat: latt, lng: lngg},
+            map: map,
+            icon: image,
+            shape: shape,
+            title: '[ '+lngg+ ', '+latt+']'
+        
+          });
+
+    }
+             function print_point4(map,lngg,latt){
+     var image = {
+          url: './yellow.png',
+          size: new google.maps.Size(7,7),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(4,4)
+        };
+        var shape = {
+          coords: [1, 1, 1, 6, 5, 6, 5, 1],
           type: 'poly'
         };
           var marker = new google.maps.Marker({
