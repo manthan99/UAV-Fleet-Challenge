@@ -74,6 +74,7 @@
       // failed.", it means you probably did not give permission for the browser to
       // locate you.
       var map, infoWindow;
+        var xy = [];
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 22.315826, lng: 87.309032},
@@ -136,7 +137,7 @@
         console.log('Drone4 at'  + ': [ ' +message.latitude+', '+message.longitude+']');
         track_drone4(map,message.longitude,message.latitude);
     });
-    var xy = [];
+    
       var listener6 = new ROSLIB.Topic({
     ros : ros,
     name : '/drone1/listener',
@@ -145,13 +146,14 @@
      listener6.subscribe(function(message) {
         console.log("Received message on " + listener6.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
+            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message.y,message.x);
+          xy.push(message);
+        
      }             
     });
           var listener7 = new ROSLIB.Topic({
@@ -162,13 +164,13 @@
      listener7.subscribe(function(message) {
         console.log("Received message on " + listener7.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
+            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message.y,message.x);
+          xy.push(message);
      }             
     });
               var listener8 = new ROSLIB.Topic({
@@ -179,13 +181,13 @@
      listener8.subscribe(function(message) {
         console.log("Received message on " + listener8.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
+            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message.y,message.x);
+          xy.push(message);
      } 
             
     });
@@ -197,13 +199,13 @@
      listener9.subscribe(function(message) {
         console.log("Received message on " + listener9.name +': [ ' +message.y+', '+message.x+']');
      if ((xy.find(function(value){ 
-            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
+            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-            xy.push(message.y,message.x);
+            xy.push(message);
      }           
     });
 
