@@ -74,7 +74,6 @@
       // failed.", it means you probably did not give permission for the browser to
       // locate you.
       var map, infoWindow;
-        var xy = [];
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 22.315826, lng: 87.309032},
@@ -137,7 +136,7 @@
         console.log('Drone4 at'  + ': [ ' +message.latitude+', '+message.longitude+']');
         track_drone4(map,message.longitude,message.latitude);
     });
-    
+    var xy = [];
       var listener6 = new ROSLIB.Topic({
     ros : ros,
     name : '/drone1/listener',
@@ -146,14 +145,13 @@
      listener6.subscribe(function(message) {
         console.log("Received message on " + listener6.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
+            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message);
-        
+          xy.push(message.y,message.x);
      }             
     });
           var listener7 = new ROSLIB.Topic({
@@ -164,13 +162,13 @@
      listener7.subscribe(function(message) {
         console.log("Received message on " + listener7.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
+            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message);
+          xy.push(message.y,message.x);
      }             
     });
               var listener8 = new ROSLIB.Topic({
@@ -181,13 +179,13 @@
      listener8.subscribe(function(message) {
         console.log("Received message on " + listener8.name +': [ ' +message.y+', '+message.x+']');
       if ((xy.find(function(value){ 
-            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
+            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-          xy.push(message);
+          xy.push(message.y,message.x);
      } 
             
     });
@@ -199,13 +197,13 @@
      listener9.subscribe(function(message) {
         console.log("Received message on " + listener9.name +': [ ' +message.y+', '+message.x+']');
      if ((xy.find(function(value){ 
-            if((Math.abs(value.y-message.y)<0.00001)&&(Math.abs(value.x-message.x)<0.00001))
+            if(((value[0]-message.y)<0.00001)&&((value[1]-message.x))<0.00001)
                 return 1;
     }))==undefined)
      {
           print_point(map,message.y,message.x);
           print_para(message.y,message.x);
-            xy.push(message);
+            xy.push(message.y,message.x);
      }           
     });
 
@@ -257,7 +255,11 @@
     });
         var listener13 = new ROSLIB.Topic({
     ros : ros,
+<<<<<<< HEAD
     name : '/master/drone0/ground_msg',
+=======
+    name : '/master/drone4/ground_msg',
+>>>>>>> b3861076dd2fceaaabdd7f915c451a31796eca1c
     messageType : 'swarm_search/sip_goal2'
   });
       listener13.subscribe(function(message) {
@@ -283,8 +285,7 @@
                 return 1;
     }))==undefined)
      {
-        print_point(map,message.data[0],message.data[1]);
-      //  track_drone4(map,message.data[0],message.data[1]);
+        print_point(map,message.data[0],message.data[1]);      //  track_drone4(map,message.data[0],message.data[1]);
        print_para(message.data[0],message.data[1]);
         xy.push([message.data[0],message.data[1]]);
     }
@@ -411,9 +412,9 @@
     document.getElementById("output").innerHTML +
     "<br>" +
     "Point found at x= " +
-    y +
+    x +
     " y= " +
-    x;
+    y;
     }
 var drone1, drone2,drone3,drone4;
 var i=0,j=0,k=0,l=0;
@@ -428,8 +429,10 @@ var i=0,j=0,k=0,l=0;
           coords: [1, 1, 1, 20, 18, 20, 18, 1],
           type: 'poly'
         };
-            if(i==0)i=1;
-            else drone1.setMap(null);
+            if(i==0)
+          //  else //drone1.setMap(null);
+            {       
+            i=1;     
             drone1 = new google.maps.Marker({
             position: {lat: latt, lng: lngg},
             map: map,
@@ -437,8 +440,8 @@ var i=0,j=0,k=0,l=0;
             shape: shape,
             title: '[ '+lngg+ ', '+latt+']'
                 });          
-            
-          
+             }
+            else drone1.position= {lat: latt, lng: lngg};
             
           
     }
