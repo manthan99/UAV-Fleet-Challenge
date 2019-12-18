@@ -57,6 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
   FILES
   sip_goal.msg
+  sip_goal2.msg
   point_list.msg
   local_flags.msg
  )
