@@ -1,1 +1,0 @@
-##This document contains details about the detection process involved in our project##
