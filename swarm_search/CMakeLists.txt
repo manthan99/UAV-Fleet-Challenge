@@ -222,3 +222,6 @@ include_directories(
 
 add_executable(master_drone1 src/master_drone1.cpp)
 target_link_libraries(master_drone1 ${catkin_LIBRARIES})
+
+add_executable(master_drone1_6SIP src/master_drone1_6SIP.cpp)
+target_link_libraries(master_drone1_6SIP ${catkin_LIBRARIES})
