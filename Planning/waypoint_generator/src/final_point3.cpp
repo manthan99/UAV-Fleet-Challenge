@@ -21,7 +21,7 @@ double heading_angle = 0.0;
 
 // nav_msgs::Path path;
 bool waypoint_reached = true;
-double height = 10;
+double height = 5;
 double FOV = 72.4*M_PI/180.0;  			// define in radians 
 double resolution_y = 480;		// image cols
 double resolution_x = 640;		// image rows
@@ -56,15 +56,15 @@ void localposcallback(const geometry_msgs::PoseStamped::ConstPtr& position)
 {
 	current_pos = *position;
 	height = current_pos.pose.position.z;
-	height = 10;
+	height = 5;
 	// cout<<"Height received: "<<height<<endl;
 }
 
-double prev_lat = 0.0, prev_long = 0.0, distance_threshold = 0.004;
+double prev_lat = 0.0, prev_long = 0.0, distance_threshold = 0.005;
 waypoint_generator::point_list close_frame_points_gps;
 void closeFramePointCallback(const waypoint_generator::point_list::ConstPtr& frame_points)
 {
-	if (flags.transition_s2s.data == true ) // will enter if flag is 1
+	if (flags.search_flag.data == true ) // will enter if flag is 1
 	{
 		double lat = frame_points->points[0].x;
 		double lon = frame_points->points[0].y;
