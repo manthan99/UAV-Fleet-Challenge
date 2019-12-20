@@ -464,7 +464,8 @@ void scan_main(ros::NodeHandle nh)
     sleep(2);
     }
 
-    flags.search_flag.data = 0; 
+    flags.search_flag.data = 0;
+    flags.recovery1_flag.data = 1; 
     for (int j= 0; j < 5; ++j)
     {
       flags_pub.publish(flags);
@@ -566,7 +567,7 @@ int main(int argc, char** argv)
     return -1;
    }
 
-  sleep(5);
+  sleep(2);
   }
   ros::spinOnce();
   scan_main(nh);
