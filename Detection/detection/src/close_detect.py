@@ -6,11 +6,11 @@
 import cv2 
 import numpy as np 
 
-import numpy as np
 import argparse
 import close_detect_help
-
-import cv2
+# from imutils import contours
+# from skimage import measure
+# import imutils
 font = cv2.FONT_HERSHEY_COMPLEX
 
 
@@ -73,60 +73,181 @@ def kalman(x, P, measurement, R, motion, Q, F, H):
 
     return x, P
 
+def avg_col(img):
+    rows = img.shape[0]
+    cols = img.shape[1]
+    colour = np.int32([np.sum(img[:, :, 0]), np.sum(img[:, :, 1]), np.sum(img[:, :, 2])])/(rows*cols)
+    return colour 
+
+def avg_col_bw(img):
+    rows = img.shape[0]
+    cols = img.shape[1]
+    colour = np.int32(np.sum(img[:, :]))/(rows*cols)
+    return colour 
+
+def avg_col_removed(img, img0):
+    rows = img.shape[0]
+    cols = img.shape[1]
+    rows0 = img0.shape[0]
+    cols0 = img0.shape[1]
+    colour = (np.int32([np.sum(img[:, :, 0]), np.sum(img[:, :, 1]), np.sum(img[:, :, 2])])-np.int32([np.sum(img0[:, :, 0]), np.sum(img0[:, :, 1]), np.sum(img0[:, :, 2])]))/((rows*cols)-(rows0*cols0))
+    return colour 
+
+def adjust_gamma(image, gamma=1.0):
+    # build a lookup table mapping the pixel values [0, 255] to
+    # their adjusted gamma values
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+        for i in np.arange(0, 256)]).astype("uint8")
+ 
+    # apply gamma correction using the lookup table
+    return cv2.LUT(image, table)
+
+def dist(pt1, pt2):
+    return np.sqrt((pt1[0]-pt2[0])**2+(pt1[1]-pt2[1])**2)
 
 def cntsearch(frameorg, state):
     list_prevkalman = state
     list_currentkalman = []
     list_matched = []
     frame = frameorg
-    gray = cv2.cvtColor(frameorg, cv2.COLOR_BGR2GRAY)
-    corners = cv2.goodFeaturesToTrack(gray,0,0.0001,0.01)
-    ctc = np.zeros(gray.shape)
-    for i in corners:
-        x,y = i.ravel()
-        ctc[int(y)][int(x)]=1
+    image = frame[:1000, :, :]
+    image = adjust_gamma(image, 1)
+    # # DID resize
+    # image = cv2.resize(image, (image.shape[1]//2, image.shape[0]//2))
+    
+    threshold= cv2.inRange(cv2.cvtColor(image, cv2.COLOR_BGR2HSV), (25, 0, 0), (100, 255, 255));  # broad threshold on hue
+    # cv2.imshow("inRange", threshold)
 
-    t2 = close_detect_help.get_cnt(frame)         #######IoU
+    # cv2.imshow("frame",image)
+    blur = (cv2.GaussianBlur(image, (5,5), 0))
+    
+    #grayg = image[:, :, 1]
+    #blurs = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+    # blurs = blur[:, :, 1]
+    # cv2.imshow("blurgreen", blurs)
+    # cv2.imshow
+    # blur = grayg
+    
+    # blurred = blur[:, :, 1]
+    #blurred = blur
+    # blurred = cv2.equalizeHist(blurred)
+    # cv2.imshow("blurgray", blurs)
+    # ret,thresh = cv2.threshold(blurs,150,255,0)
+    # thresh = cv2.erode(thresh, None, iterations=6)
+    # thresh = cv2.dilate(thresh, None, iterations=6)
+    # cv2.imshow("thresherodedilate", thresh)
+    # cv2.imshow("thresh", thresh)
 
-    frame = cv2.GaussianBlur(frame, (11,11), 0)
-    contourlist = []
-    for cnt in t2:
-        rects_temp = cv2.boundingRect(cnt)
+    imgx = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
+    imgy = cv2.cvtColor(imgx, cv2.COLOR_BGR2GRAY)
 
-        rects = np.array([[rects_temp[0], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]], [rects_temp[0]+rects_temp[2], rects_temp[1]+rects_temp[3]], [rects_temp[0], rects_temp[1]+rects_temp[3]]])
-        rects = rects.reshape(cnt.shape)
-        center =  np.sum(rects, axis=0)/4
-        rects = np.maximum((0.5*(rects - center) + center).astype(int), np.zeros(rects.shape)).astype(int)
-        rects_temp = cv2.boundingRect(rects)
+    ret, threshhsv = cv2.threshold(imgy,100,255,0)            #######param for threshold, hsv ko rgb treat krke gray mein convert kra
+    # cv2.imshow("invthresh", threshhsv)
+    
+    thresh = np.uint8(threshold*(threshold/255.0))
+    threshhsv = np.uint8(threshold*(threshhsv/255.0))
 
-        rectl = np.maximum((3*(rects - center) + center).astype(int), np.zeros(rects.shape)).astype(int)
-        rectl_temp = cv2.boundingRect(rectl)
-        rectl_temp = [rectl_temp[0], rectl_temp[1], rectl_temp[2], rectl_temp[3]]
-        if rectl_temp[0]+rectl_temp[2] >= ctc.shape[1]:
-            rectl_temp[2] = ctc.shape[1]-rectl_temp[0]-1
-        if rectl_temp[1]+rectl_temp[3] >= ctc.shape[0]:
-            rectl_temp[3] = ctc.shape[0]-rectl_temp[1]-1
-        sel = np.ix_(np.arange(rects_temp[1], rects_temp[1]+rects_temp[3]).tolist(), np.arange(rects_temp[0], rects_temp[0]+rects_temp[2]).tolist())
-        selc = np.ix_(np.arange(rects_temp[1], rects_temp[1]+rects_temp[3]).tolist(), np.arange(rects_temp[0], rects_temp[0]+rects_temp[2]).tolist(), [0,1,2])
-        acs = np.sum(frameorg[selc], axis=(0,1)).astype(np.float)/rects_temp[2]/rects_temp[3]
-        fcs = np.sum(ctc[(sel)])
-        vs = np.var(frame[selc])
-        sel = np.ix_(np.arange(rectl_temp[1], rectl_temp[1]+rectl_temp[3]).tolist(), np.arange(rectl_temp[0], rectl_temp[0]+rectl_temp[2]).tolist())
-        selc = np.ix_(np.arange(rectl_temp[1], rectl_temp[1]+rectl_temp[3]).tolist(), np.arange(rectl_temp[0], rectl_temp[0]+rectl_temp[2]).tolist(), [0,1,2])
-        fcl = np.sum(ctc[(sel)])
-        acl = np.sum(frameorg[selc], axis=(0,1)).astype(np.float)/rectl_temp[2]/rectl_temp[3]
+    kernel = np.ones((5,5), np.uint8)
+
+    threshhsv = cv2.erode(threshhsv, kernel, iterations=1)
+    threshhsv = cv2.dilate(threshhsv, kernel, iterations=1)
+
+
+    invcontours, invhierarchy = cv2.findContours((threshhsv),cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    # contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    # cnts = cv2.findContours(gray.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # contours = imutils.grab_contours(contours)
+    cnts = []
+    # for cnt in contours:
+    #   k = cv2.isContourConvex(cnt)
+    #   # if not k:
+    #   #   continue
+    #   area = cv2.contourArea(cnt)
+    #   if area<300 or area>2000:
+    #       continue
+
+    #   epsilon = 0.05*cv2.arcLength(cnt,True)
+    #   approx = cv2.approxPolyDP(cnt,epsilon,True)
+    #   if len(approx) != 4:
+    #       continue
         
-        d = fcs*rectl_temp[2]*rectl_temp[3]/fcl/rects_temp[2]/rects_temp[3]
-        t = (acs-acl)/255.0
+    #   hull = cv2.convexHull(cnt)
+    #   hullarea = cv2.contourArea(hull)
+    #   if hullarea != 0:
+    #       # print(area/hullarea)
+    #       if area/hullarea<0.7:
+    #           continue
+
+    #   rect = cv2.minAreaRect(cnt)
+    #   rectarea = cv2.contourArea(hull)
+    #   # print(rectarea/area)
+    #   # if rectarea/area>1.10:
+    #   #   continue
+
+    #   cnts.append(cnt)
+
+    for cnt in invcontours:
+        # k = cv2.isContourConvex(cnt)
+        # if not k:
+        #   continue
+        area = cv2.contourArea(cnt)
+        if area<0 or area>500:
+            print("more area")
+            continue
+        print("area: "+str(area))
+
+
+        epsilon = 0.05*cv2.arcLength(cnt,True)     # param might not be changed
+        approx = cv2.approxPolyDP(cnt,epsilon,True)
+        if len(approx) != 4:
+            print("not box")
+            continue
         
-        t = t*t
+        hull = cv2.convexHull(cnt)
+        hullarea = cv2.contourArea(hull)
+        # print(area/hullarea)
+        # if hullarea!=0:
+        #   if area/hullarea<0.7:
+        #       continue
+        rect = cv2.minAreaRect(cnt)
+        # rectarea = cv2.contourArea(rect)
+        box = cv2.boxPoints(rect)
 
-        if (d < 1 or fcl == 0) and np.sum(t) > 0.04:
-            # print(vs)
-            contourlist.append(cnt)
-            cv2.drawContours(frameorg, [rectl, rects],-1, (0,255,0),1)
+        print(box)
+        ar = dist(box[0], box[1])/dist(box[2], box[1])
+        # if ar>1.3 or ar<0.7:
+        #   print("ar: "+str(ar))
+        #   continue
+        # print(rectarea/area)
 
-    for cnt in contourlist:
+        cnts.append(cnt)
+
+    cnts1 = []
+    for cnt in cnts:
+        (x, y, w, h) = cv2.boundingRect(cnt)
+
+        cntimg = blur[y:y+h, x:x+w, :]
+        cnt_extnd_wnd = blur[max(0, y-10):min(y+h+10, image.shape[0]), max(0, x-10):min(x+w+10, image.shape[1]), :]
+        c1 = avg_col(cntimg)
+        c0 = avg_col_removed(cnt_extnd_wnd, cntimg)
+        diffs = (np.mean(np.abs(c1 - c0)))
+        if diffs<20:
+            # print("GRASS")
+            print("GRASS")
+            continue
+        threshimg = threshold[y:y+h, x:x+w]
+        threscol = avg_col_bw(threshimg)
+        print(threscol)
+        if threscol<150:
+            print("not green")
+            continue
+        cnts1.append(cnt)
+        # cnts1.append(cv2.boundingRect(cnt))
+
+    # return cnts1, None
+        
+    for cnt in cnts1:
         ((cX, cY), radius) = cv2.minEnclosingCircle(cnt)
         cl = np.array([cX, cY])
         matched = False
@@ -143,29 +264,32 @@ def cntsearch(frameorg, state):
             lcv = P[:2, :2]
             t = np.array([cX-x[0][0], cY - x[1][0]]).reshape((1,2))
             lpp = np.matmul(np.matmul(t, lcv), t.T)
-            if lpp < 50000:
+            if lpp < 5000:
                 matched = True
                 list_matched.append((x,P))
                 list_currentkalman.append((kalman_xy(x, P, cl, R), dc+1, 0, cnt))
         
         if not matched:
             x = np.matrix('0. 0. 0. 0.').T 
-            P = np.matrix(np.eye(4))*10
-            list_currentkalman.append((kalman_xy(x, P, cl, R), 1, 0, cnt))
-    contourlist = []
+            P = np.matrix(np.eye(4))*10 # initial uncertainty
 
+            list_currentkalman.append((kalman_xy(x, P, cl, R), 1, 0, cnt))
+    # print(len(list_currentkalman), len(list_matched), len(list_prevkalman))
+    # print(cnts1)
+    fcontours = []
     for (x, P), dc, mc, cnt in list_prevkalman:
-        br = False
+        br=False
         for (x2, P2) in list_matched:
-            if (x == x2).all() and (P == P2).all():
+            if (x==x2).all() and (P==P2).all():
                 br = True
                 break
         if not br:
-            if mc <= 3:  # see this,     this is to remove the rong kalman
-                list_currentkalman.append(((x, P), dc, mc + 1, cnt))
-    for (x, P), dc, mc, cnt in list_currentkalman:
-        if dc >= 2 and mc<=0:  # to finalise the kalman that it is correct
-            contourlist.append(cv2.boundingRect(cnt))
-
-    list_prevkalman = list_currentkalman[:]    
-    return contourlist, list_prevkalman
+            if mc<10:
+                list_currentkalman.append(((x, P), dc, mc+1, cnt))
+        if dc>5:
+            fcontours.append(cv2.boundingRect(cnt))
+            cv2.circle(image, (int(x[0][0]), int(x[1][0])), int(10),
+                (0, 255, 0), 3)
+    # cv2.imshow("image", image)
+    list_prevkalman = list_currentkalman[:]
+    return fcontours, list_prevkalman
